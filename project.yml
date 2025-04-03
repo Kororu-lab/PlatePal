@@ -1,0 +1,31 @@
+name: PlatePal
+options:
+  bundleIdPrefix: com.platepal
+  deploymentTarget:
+    iOS: 15.0
+  xcodeVersion: "14.0"
+targets:
+  PlatePal:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+    settings:
+      base:
+        INFOPLIST_FILE: Sources/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.platepal.app
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleName: PlatePal
+        CFBundleDisplayName: PlatePal
+        CFBundlePackageType: APPL
+        CFBundleShortVersionString: 1.0.0
+        CFBundleVersion: 1
+        UILaunchStoryboardName: LaunchScreen
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        NSLocationWhenInUseUsageDescription: "근처 음식점을 찾기 위해 위치 정보가 필요합니다."
+        NSLocationAlwaysAndWhenInUseUsageDescription: "근처 음식점을 찾기 위해 위치 정보가 필요합니다."
+        NSCameraUsageDescription: "리뷰 작성 시 사진 첨부를 위해 카메라 접근 권한이 필요합니다."
+        NSPhotoLibraryUsageDescription: "리뷰 작성 시 사진 첨부를 위해 사진 라이브러리 접근 권한이 필요합니다." 

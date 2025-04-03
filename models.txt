@@ -1,0 +1,158 @@
+# PlatePal (플레이트팔) - 저녁 메뉴 추천 앱
+
+## 프로젝트 개요
+PlatePal은 사용자의 위치를 기반으로 저녁 메뉴를 추천해주는 iOS 앱입니다. 
+사용자의 선호도를 학습하여 점차 맞춤형 추천을 제공하며, 흔들기 기능을 통해 빠른 추천을 받을 수 있습니다.
+
+## 주요 기능
+1. 위치 기반 음식점 추천
+   - 네이버 지도 API를 활용한 근처 음식점 검색
+   - 사용자 현재 위치 기반 필터링
+   - 가격대, 카테고리 등 상세 정보 제공
+
+2. 맞춤형 추천 시스템
+   - 초기 무작위 추천
+   - 사용자 선호도(좋아요/싫어요) 기반 학습
+   - 방문 이력 및 리뷰 반영
+
+3. 사용자 경험
+   - 흔들기로 빠른 추천 받기
+   - 직관적인 UI/UX
+   - 상세 정보 및 리뷰 시스템
+
+## 기술 스택
+- SwiftUI: 모던한 UI 구현
+- Core Location: 위치 기반 서비스
+- Core Motion: 흔들기 감지
+- Naver Maps API: 지도 및 장소 검색
+- Core Data: 로컬 데이터 저장
+- Combine: 반응형 프로그래밍
+
+## 아키텍처
+- MVVM (Model-View-ViewModel) 패턴 사용
+- Clean Architecture 원칙 적용
+- 의존성 주입을 통한 테스트 용이성 확보
+
+## 구현 현황
+
+### 완료된 작업
+1. 프로젝트 기본 구조 설정
+   - README.md 생성
+   - project.yml 설정
+   - 기본 디렉토리 구조 생성
+   - iOS 15.0+ 타겟 설정
+
+2. 기본 파일 생성
+   - PlatePalApp.swift: 앱 진입점
+   - ContentView.swift: 메인 탭 뷰
+   - Restaurant.swift: 음식점 모델
+   - LocationManager.swift: 위치 서비스
+
+3. 추천 화면 구현
+   - RecommendationView.swift: UI 구현
+   - RecommendationViewModel.swift: 비즈니스 로직
+   - 기본 UI 컴포넌트 (RestaurantCard, ActionButton)
+   - 임시 데이터를 활용한 UI 테스트
+
+### 진행 중인 작업
+1. 네이버 지도 API 연동
+   - API 키 설정
+   - 장소 검색 기능 구현
+   - 지도 표시 기능 구현
+
+2. 추천 알고리즘 구현
+   - 기본 추천 로직 설계
+   - 사용자 선호도 반영 로직
+   - 가중치 시스템 설계
+
+3. 사용자 선호도 저장 시스템
+   - Core Data 모델 설계
+   - CRUD 작업 구현
+   - 데이터 마이그레이션 전략
+
+4. 흔들기 감지 기능
+   - Core Motion 설정
+   - 흔들기 이벤트 처리
+   - UI 피드백 구현
+
+5. 리뷰 시스템
+   - 리뷰 모델 설계
+   - 리뷰 작성 UI
+   - 리뷰 표시 기능
+
+### 다음 작업 예정
+1. HistoryView 구현
+   - 선호도 내역 표시
+   - 필터링 기능
+   - 상세 정보 보기
+
+2. SettingsView 구현
+   - 앱 설정 관리
+   - 사용자 프로필
+   - 알림 설정
+
+3. Core Data 설정
+   - 데이터 모델 정의
+   - 저장소 설정
+   - 마이그레이션 관리
+
+4. 네이버 지도 API 연동
+   - 지도 뷰 구현
+   - 장소 검색 연동
+   - 위치 기반 필터링
+
+5. 흔들기 감지 기능 구현
+   - 모션 감지 설정
+   - 이벤트 핸들링
+   - UI 피드백
+
+## 데이터 모델
+### Restaurant
+```swift
+struct Restaurant {
+    let id: String
+    let name: String
+    let address: String
+    let category: String
+    let priceRange: PriceRange
+    let rating: Double
+    let latitude: Double
+    let longitude: Double
+    var userRating: Int?
+    var userReview: String?
+    var lastVisited: Date?
+}
+```
+
+### UserPreference
+```swift
+struct UserPreference {
+    let restaurantId: String
+    let isLiked: Bool
+    let timestamp: Date
+}
+```
+
+## 향후 계획
+1. 소셜 기능 추가
+   - 친구와 추천 공유
+   - 그룹 추천
+   - 리뷰 공유
+
+2. AI 기반 추천 강화
+   - 머신러닝 모델 도입
+   - 사용자 패턴 분석
+   - 계절/날씨 기반 추천
+
+3. 확장 기능
+   - 예약 시스템 연동
+   - 배달 서비스 연동
+   - 쿠폰/할인 정보 제공
+
+## 참고사항
+- iOS 15.0+ 타겟
+- MVVM 아키텍처 패턴 사용
+- 위치 기반 서비스 구현 중
+- UI 구현 완료, 실제 데이터 연동 필요
+- 네이버 지도 API 키 필요
+- Core Data 마이그레이션 전략 수립 필요 
