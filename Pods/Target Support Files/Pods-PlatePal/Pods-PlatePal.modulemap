@@ -1,6 +1,0 @@
-framework module Pods_PlatePal {
-  umbrella header "Pods-PlatePal-umbrella.h"
-
-  export *
-  module * { export * }
-}
