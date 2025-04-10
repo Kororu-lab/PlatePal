@@ -44,6 +44,9 @@ struct MapView: UIViewRepresentable {
     @ObservedObject var viewModel: RecommendationViewModel
     let locationManager: LocationManager
     
+    // Store markers to manage them properly but use a private(set) instead of private
+    private(set) var markers: [NMFMarker] = []
+    
     func makeUIView(context: Context) -> NMFNaverMapView {
         let mapView = NMFNaverMapView()
         mapView.showZoomControls = true
@@ -55,18 +58,16 @@ struct MapView: UIViewRepresentable {
         mapView.mapView.positionMode = .direction
         mapView.mapView.zoomLevel = 15
         
-        // Set auth failure handler for debugging
+        // Set delegates for events
         #if DEBUG
         mapView.mapView.touchDelegate = context.coordinator
-        mapView.mapView.addOptionDelegate(context.coordinator)
-        // Handle auth failure
-        mapView.mapView.authFailureHandler = { error in
-            print("Naver Map auth failed: \(error.localizedDescription)")
-        }
+        mapView.mapView.addOptionDelegate(delegate: context.coordinator)
+        print("Naver Map initialized and delegates set")
         #endif
         
         // Set initial camera position to user's location if available
         if let location = locationManager.location {
+            print("Setting initial camera position to \(location.coordinate.latitude), \(location.coordinate.longitude)")
             let coord = NMGLatLng(lat: location.coordinate.latitude, lng: location.coordinate.longitude)
             let cameraUpdate = NMFCameraUpdate(scrollTo: coord)
             mapView.mapView.moveCamera(cameraUpdate)
@@ -75,9 +76,12 @@ struct MapView: UIViewRepresentable {
             let marker = NMFMarker()
             marker.position = coord
             marker.mapView = mapView.mapView
-            marker.iconImage = NMFOverlayImage(name: "marker") // Use a custom marker or built-in one
+            marker.captionText = "현재 위치"
+            marker.iconImage = NMF_MARKER_IMAGE_BLUE // Use built-in marker image
             marker.width = 40
             marker.height = 40
+        } else {
+            print("No location available for initial camera position")
         }
         
         // Force render map and layout
@@ -98,17 +102,19 @@ struct MapView: UIViewRepresentable {
             uiView.mapView.moveCamera(cameraUpdate)
             
             // Update restaurants on map
-            updateRestaurantMarkers(on: uiView.mapView, with: viewModel.restaurants)
+            var copy = self
+            copy.updateRestaurantMarkers(on: uiView.mapView, with: viewModel.restaurants)
         }
     }
     
-    private func updateRestaurantMarkers(on mapView: NMFMapView, with restaurants: [Restaurant]) {
-        // Remove existing markers
-        mapView.subviews.forEach { view in
-            if let marker = view as? NMFMarker {
-                marker.mapView = nil
-            }
+    mutating func updateRestaurantMarkers(on mapView: NMFMapView, with restaurants: [Restaurant]) {
+        // Remove existing markers by setting their mapView to nil
+        for marker in markers {
+            marker.mapView = nil
         }
+        
+        // Clear the markers array
+        markers.removeAll()
         
         // Add new markers
         for restaurant in restaurants {
@@ -122,6 +128,9 @@ struct MapView: UIViewRepresentable {
                 print("Restaurant marker tapped: \(restaurant.name)")
                 return true
             }
+            
+            // Store the marker for future removal
+            markers.append(marker)
         }
     }
     

@@ -15,6 +15,66 @@ class RecommendationViewModel: ObservableObject {
     
     init(locationManager: LocationManager) {
         self.locationManager = locationManager
+        
+        // Load sample data immediately
+        loadSampleData()
+        
+        // Subscribe to location updates
+        locationManager.$location
+            .compactMap { $0 }
+            .debounce(for: .seconds(1), scheduler: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.fetchRestaurants()
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func loadSampleData() {
+        // Load sample data immediately so map has something to display
+        restaurants = [
+            Restaurant(
+                id: "1",
+                name: "맛있는 돈까스",
+                address: "서울시 강남구 테헤란로 123",
+                category: "일식",
+                rating: 4.5,
+                reviewCount: 120,
+                priceRange: .medium,
+                location: CLLocationCoordinate2D(latitude: 37.5665, longitude: 126.9780),
+                imageURL: nil,
+                phoneNumber: nil,
+                operatingHours: nil,
+                description: nil
+            ),
+            Restaurant(
+                id: "2",
+                name: "서울 냉면",
+                address: "서울시 강남구 강남대로 456",
+                category: "한식",
+                rating: 4.7,
+                reviewCount: 85,
+                priceRange: .medium,
+                location: CLLocationCoordinate2D(latitude: 37.5645, longitude: 126.9810),
+                imageURL: nil,
+                phoneNumber: nil,
+                operatingHours: nil,
+                description: nil
+            ),
+            Restaurant(
+                id: "3",
+                name: "스시 하우스",
+                address: "서울시 강남구 선릉로 789",
+                category: "일식",
+                rating: 4.8,
+                reviewCount: 200,
+                priceRange: .premium,
+                location: CLLocationCoordinate2D(latitude: 37.5685, longitude: 126.9760),
+                imageURL: nil,
+                phoneNumber: nil,
+                operatingHours: nil,
+                description: nil
+            )
+        ]
     }
     
     func fetchRestaurants() {
@@ -35,6 +95,7 @@ class RecommendationViewModel: ObservableObject {
                     self.isLoading = false
                 }
             } catch {
+                print("Error fetching restaurants: \(error.localizedDescription)")
                 await MainActor.run {
                     self.error = error
                     self.isLoading = false
