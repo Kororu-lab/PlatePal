@@ -8,9 +8,12 @@ struct RecommendationView: View {
     
     var body: some View {
         NavigationView {
-            ZStack {
+            ZStack(alignment: .bottom) {
+                // Explicitly set frame to full size
                 MapView(viewModel: viewModel, locationManager: locationManager)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .edgesIgnoringSafeArea(.all)
+                    .background(Color.gray) // Background color to help identify rendering issues
                 
                 VStack {
                     Spacer()
@@ -44,19 +47,57 @@ struct MapView: UIViewRepresentable {
     @ObservedObject var viewModel: RecommendationViewModel
     let locationManager: LocationManager
     
-    // Store markers to manage them properly but use a private(set) instead of private
-    private(set) var markers: [NMFMarker] = []
+    // Store markers in a class wrapper to avoid mutating struct issues
+    class MarkerStore {
+        var markers: [NMFMarker] = []
+        
+        func clearMarkers() {
+            for marker in markers {
+                marker.mapView = nil
+            }
+            markers.removeAll()
+        }
+        
+        func addMarker(_ marker: NMFMarker) {
+            markers.append(marker)
+        }
+    }
+    
+    // Use a reference type to store markers
+    let markerStore = MarkerStore()
     
     func makeUIView(context: Context) -> NMFNaverMapView {
         let mapView = NMFNaverMapView()
         mapView.showZoomControls = true
         mapView.showCompass = true
         mapView.showScaleBar = true
-        mapView.showLocationButton = true
+        mapView.showLocationButton = false // Disable location button to prevent auto-location
         
         // Configure map
-        mapView.mapView.positionMode = .direction
+        mapView.mapView.positionMode = .disabled // Disable positioning mode
         mapView.mapView.zoomLevel = 15
+        
+        // === FIX FOR MAP NOT SHOWING ===
+        // Set map type explicitly
+        mapView.mapView.mapType = .basic
+        
+        // Set background color
+        mapView.mapView.backgroundColor = UIColor.lightGray
+        
+        // Ensure the layer is visible and not hidden
+        mapView.mapView.layer.isHidden = false
+        
+        // Force the map to be visible
+        mapView.mapView.isHidden = false
+        
+        // Enable all necessary features
+        mapView.mapView.liteModeEnabled = false
+        mapView.mapView.isIndoorMapEnabled = true
+        
+        // Set content insets to zero to ensure full visibility
+        mapView.mapView.contentInset = UIEdgeInsets.zero
+        
+        // End of map display fixes
         
         // Set delegates for events
         #if DEBUG
@@ -65,23 +106,46 @@ struct MapView: UIViewRepresentable {
         print("Naver Map initialized and delegates set")
         #endif
         
-        // Set initial camera position to user's location if available
-        if let location = locationManager.location {
-            print("Setting initial camera position to \(location.coordinate.latitude), \(location.coordinate.longitude)")
-            let coord = NMGLatLng(lat: location.coordinate.latitude, lng: location.coordinate.longitude)
-            let cameraUpdate = NMFCameraUpdate(scrollTo: coord)
+        // Force camera position to Gangnam Station immediately
+        let gangnamStation = NMGLatLng(lat: 37.498095, lng: 127.027610)
+        
+        // Use a series of camera updates with increasing strength
+        // First immediate update with no animation
+        let immediateUpdate = NMFCameraUpdate(scrollTo: gangnamStation)
+        immediateUpdate.animation = .none
+        mapView.mapView.moveCamera(immediateUpdate)
+        
+        print("Setting initial camera position to Gangnam Station")
+        
+        // Then schedule another update with animation, in case first one didn't take
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            let cameraUpdate = NMFCameraUpdate(scrollTo: gangnamStation)
+            cameraUpdate.animation = .easeIn
+            cameraUpdate.animationDuration = 0.5
             mapView.mapView.moveCamera(cameraUpdate)
             
-            // Add marker for current location
+            // Add marker for Gangnam Station
             let marker = NMFMarker()
-            marker.position = coord
+            marker.position = gangnamStation
             marker.mapView = mapView.mapView
-            marker.captionText = "현재 위치"
-            marker.iconImage = NMF_MARKER_IMAGE_BLUE // Use built-in marker image
+            marker.captionText = "강남역"
+            marker.iconImage = NMF_MARKER_IMAGE_BLUE
             marker.width = 40
             marker.height = 40
-        } else {
-            print("No location available for initial camera position")
+            
+            // Update with initial restaurants
+            updateRestaurantMarkers(on: mapView.mapView, with: viewModel.restaurants)
+            
+            print("Map should be centered on Gangnam Station now")
+        }
+        
+        // And finally, a third update to really make sure it sticks
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            // Force Gangnam Station again with zoom
+            let finalUpdate = NMFCameraUpdate(scrollTo: gangnamStation, zoomTo: 15)
+            finalUpdate.animation = .none
+            mapView.mapView.moveCamera(finalUpdate)
+            print("Final camera position force to Gangnam Station")
         }
         
         // Force render map and layout
@@ -92,29 +156,22 @@ struct MapView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: NMFNaverMapView, context: Context) {
-        // Update map when location changes
-        if let location = locationManager.location {
-            let coord = NMGLatLng(lat: location.coordinate.latitude, lng: location.coordinate.longitude)
-            
-            // Only move camera if location has changed significantly
-            let cameraUpdate = NMFCameraUpdate(scrollTo: coord)
-            cameraUpdate.animation = .easeIn
-            uiView.mapView.moveCamera(cameraUpdate)
-            
-            // Update restaurants on map
-            var copy = self
-            copy.updateRestaurantMarkers(on: uiView.mapView, with: viewModel.restaurants)
+        // IMPORTANT: Don't move camera to user location here
+        // Only update markers
+        updateRestaurantMarkers(on: uiView.mapView, with: viewModel.restaurants)
+        
+        // Force layout and redraw to ensure map is visible
+        DispatchQueue.main.async {
+            uiView.setNeedsLayout()
+            uiView.layoutIfNeeded()
         }
     }
     
-    mutating func updateRestaurantMarkers(on mapView: NMFMapView, with restaurants: [Restaurant]) {
-        // Remove existing markers by setting their mapView to nil
-        for marker in markers {
-            marker.mapView = nil
-        }
+    func updateRestaurantMarkers(on mapView: NMFMapView, with restaurants: [Restaurant]) {
+        // Remove existing markers
+        markerStore.clearMarkers()
         
-        // Clear the markers array
-        markers.removeAll()
+        print("Updating map with \(restaurants.count) restaurants")
         
         // Add new markers
         for restaurant in restaurants {
@@ -123,14 +180,19 @@ struct MapView: UIViewRepresentable {
             marker.captionText = restaurant.name
             marker.mapView = mapView
             
+            // Set marker properties
+            marker.iconImage = NMF_MARKER_IMAGE_RED // Use built-in marker image
+            marker.width = 30
+            marker.height = 40
+            
             // Add touch handler
             marker.touchHandler = { overlay in
                 print("Restaurant marker tapped: \(restaurant.name)")
                 return true
             }
             
-            // Store the marker for future removal
-            markers.append(marker)
+            // Store the marker
+            markerStore.addMarker(marker)
         }
     }
     
@@ -144,6 +206,8 @@ struct MapView: UIViewRepresentable {
         
         init(_ parent: MapView) {
             self.parent = parent
+            super.init()
+            print("Map coordinator initialized")
         }
         
         // Map touch delegate
@@ -154,6 +218,17 @@ struct MapView: UIViewRepresentable {
         // Map option delegate for additional configuration
         func mapViewOptionChanged(_ mapView: NMFMapView) {
             print("Map options changed")
+            
+            // Force a refresh of the map view
+            DispatchQueue.main.async {
+                mapView.setNeedsDisplay()
+                
+                // Log current map state to debug
+                print("Map is hidden: \(mapView.isHidden)")
+                print("Map layer is hidden: \(mapView.layer.isHidden)")
+                print("Map type: \(mapView.mapType.rawValue)")
+                print("Map frame: \(mapView.frame)")
+            }
         }
     }
 }

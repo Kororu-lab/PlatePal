@@ -42,9 +42,9 @@ class RecommendationViewModel: ObservableObject {
                 priceRange: .medium,
                 location: CLLocationCoordinate2D(latitude: 37.5665, longitude: 126.9780),
                 imageURL: nil,
-                phoneNumber: nil,
-                operatingHours: nil,
-                description: nil
+                phoneNumber: "02-123-4567",
+                operatingHours: "10:00 - 22:00",
+                description: "맛있는 돈까스 전문점"
             ),
             Restaurant(
                 id: "2",
@@ -56,9 +56,9 @@ class RecommendationViewModel: ObservableObject {
                 priceRange: .medium,
                 location: CLLocationCoordinate2D(latitude: 37.5645, longitude: 126.9810),
                 imageURL: nil,
-                phoneNumber: nil,
-                operatingHours: nil,
-                description: nil
+                phoneNumber: "02-345-6789",
+                operatingHours: "11:00 - 21:00",
+                description: "시원한 냉면 전문점"
             ),
             Restaurant(
                 id: "3",
@@ -70,9 +70,9 @@ class RecommendationViewModel: ObservableObject {
                 priceRange: .premium,
                 location: CLLocationCoordinate2D(latitude: 37.5685, longitude: 126.9760),
                 imageURL: nil,
-                phoneNumber: nil,
-                operatingHours: nil,
-                description: nil
+                phoneNumber: "02-567-8901",
+                operatingHours: "12:00 - 22:00",
+                description: "신선한 초밥과 사시미"
             )
         ]
     }
@@ -91,12 +91,27 @@ class RecommendationViewModel: ObservableObject {
                 )
                 
                 await MainActor.run {
-                    self.restaurants = restaurants
+                    if !restaurants.isEmpty {
+                        self.restaurants = restaurants
+                    }
                     self.isLoading = false
                 }
             } catch {
-                print("Error fetching restaurants: \(error.localizedDescription)")
                 await MainActor.run {
+                    if let networkError = error as? NetworkError {
+                        switch networkError {
+                        case .decodingError(let message):
+                            print("Decoding error: \(message)")
+                        case .apiError(let message):
+                            print("API error: \(message)")
+                        case .other(let error):
+                            print("Other error: \(error.localizedDescription)")
+                        }
+                    } else {
+                        print("Error fetching restaurants: \(error)")
+                    }
+                    
+                    // Don't clear restaurants on error - keep existing data
                     self.error = error
                     self.isLoading = false
                 }

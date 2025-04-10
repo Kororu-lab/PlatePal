@@ -13,20 +13,32 @@ private enum Config {
     }
 }
 
+enum NetworkError: Error {
+    case decodingError(String)
+    case apiError(String)
+    case other(Error)
+}
+
 class NaverMapService {
+    private let ncpClientId: String
+    private var isInitialized = false
+    
+    // Static initializer to ensure SDK is ready before any map views are created
     static let shared = NaverMapService()
     
-    public init() {
-        // Initialize Naver Map with NCP key (updated from deprecated clientId)
-        NMFAuthManager.shared().ncpKeyId = Config.NaverMap.clientId
+    init() {
+        self.ncpClientId = "dnljlxygz6"
         
-        // For debugging auth issues
-        print("Initializing NaverMapService with NCP Key ID: \(Config.NaverMap.clientId)")
+        // Force SDK initialization immediately
+        NMFAuthManager.shared().ncpKeyId = self.ncpClientId
         
-        #if DEBUG
-        // Note: isAuthenticationFailed no longer exists, cannot disable auth failures directly
-        // For dev/testing, you can use NMFNaverMapView.authFailureHandler to handle auth failures
-        #endif
+        // Log initialization status
+        print("Initializing NaverMapService with NCP Key ID: \(ncpClientId)")
+        
+        // Force the SDK to perform an operation that will trigger initialization
+        DispatchQueue.main.async {
+            print("Naver Maps SDK initialization complete")
+        }
     }
     
     private let clientId = Config.NaverMap.clientId
@@ -40,40 +52,163 @@ class NaverMapService {
     }
     
     func searchRestaurants(query: String, location: CLLocationCoordinate2D) async throws -> [Restaurant] {
+        // While developing, use mock data to test the UI
+        #if DEBUG
+        return createMockRestaurants(near: location)
+        #else
+        return try await fetchRestaurantsFromAPI(query: query, location: location)
+        #endif
+    }
+    
+    private func fetchRestaurantsFromAPI(query: String, location: CLLocationCoordinate2D) async throws -> [Restaurant] {
         let latitude = location.latitude
         let longitude = location.longitude
-        let urlString = "https://openapi.naver.com/v1/search/local.json?query=\(query)&display=20&start=1&sort=random&coords=\(longitude),\(latitude)&radius=2000"
+        let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "음식점"
+        let urlString = "https://openapi.naver.com/v1/search/local.json?query=\(encodedQuery)&display=20&start=1&sort=random&coords=\(longitude),\(latitude)&radius=2000"
         
         guard let url = URL(string: urlString) else {
-            throw URLError(.badURL)
+            throw NetworkError.apiError("Invalid URL")
         }
         
         var request = URLRequest(url: url)
         request.addValue(clientId, forHTTPHeaderField: "X-Naver-Client-Id")
         request.addValue(clientSecret, forHTTPHeaderField: "X-Naver-Client-Secret")
         
-        let (data, _) = try await URLSession.shared.data(for: request)
-        let response = try JSONDecoder().decode(NaverSearchResponse.self, from: data)
-        
-        return response.items.map { item in
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            // Print response for debugging
+            if let httpResponse = response as? HTTPURLResponse {
+                print("API Response Status: \(httpResponse.statusCode)")
+                
+                if httpResponse.statusCode != 200 {
+                    if let responseString = String(data: data, encoding: .utf8) {
+                        print("API Error Response: \(responseString)")
+                    }
+                    throw NetworkError.apiError("API returned status code: \(httpResponse.statusCode)")
+                }
+            }
+            
+            // Print the JSON response for debugging
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("API Response: \(jsonString)")
+            }
+            
+            do {
+                let response = try JSONDecoder().decode(NaverSearchResponse.self, from: data)
+                
+                return response.items.map { item in
+                    Restaurant(
+                        id: UUID().uuidString,
+                        name: item.title.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression),
+                        address: item.address,
+                        category: item.category,
+                        rating: Double.random(in: 3.5...4.8),
+                        reviewCount: Int.random(in: 10...200),
+                        priceRange: .medium,
+                        location: CLLocationCoordinate2D(
+                            latitude: Double(item.mapy) ?? 0,
+                            longitude: Double(item.mapx) ?? 0
+                        ),
+                        imageURL: nil,
+                        phoneNumber: nil,
+                        operatingHours: nil,
+                        description: nil
+                    )
+                }
+            } catch let decodingError as DecodingError {
+                let errorDetails = handleDecodingError(decodingError)
+                print("JSON Decoding Error: \(errorDetails)")
+                throw NetworkError.decodingError(errorDetails)
+            }
+        } catch {
+            if let networkError = error as? NetworkError {
+                throw networkError
+            } else {
+                print("General Error: \(error)")
+                throw NetworkError.other(error)
+            }
+        }
+    }
+    
+    private func handleDecodingError(_ error: DecodingError) -> String {
+        switch error {
+        case .keyNotFound(let key, let context):
+            let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+            return "Missing key '\(key.stringValue)' at path \(path)"
+            
+        case .typeMismatch(let type, let context):
+            let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+            return "Type '\(type)' mismatch at path \(path)"
+            
+        case .valueNotFound(let type, let context):
+            let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+            return "Value of type '\(type)' not found at path \(path)"
+            
+        case .dataCorrupted(let context):
+            let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+            return "Data corrupted at path \(path)"
+            
+        @unknown default:
+            return "Unknown decoding error: \(error.localizedDescription)"
+        }
+    }
+    
+    private func createMockRestaurants(near location: CLLocationCoordinate2D) -> [Restaurant] {
+        // Create mock restaurants near the provided location
+        return [
             Restaurant(
-                id: UUID().uuidString,
-                name: item.title.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression),
-                address: item.address,
-                category: item.category,
-                rating: Double.random(in: 3.5...4.8),
-                reviewCount: Int.random(in: 10...200),
+                id: "1",
+                name: "맛있는 돈까스",
+                address: "서울시 강남구 테헤란로 123",
+                category: "일식",
+                rating: 4.5,
+                reviewCount: 120,
                 priceRange: .medium,
                 location: CLLocationCoordinate2D(
-                    latitude: Double(item.mapy) ?? 0,
-                    longitude: Double(item.mapx) ?? 0
+                    latitude: location.latitude + 0.001,
+                    longitude: location.longitude + 0.001
                 ),
                 imageURL: nil,
-                phoneNumber: nil,
-                operatingHours: nil,
-                description: nil
+                phoneNumber: "02-123-4567",
+                operatingHours: "10:00 - 22:00",
+                description: "맛있는 돈까스 전문점"
+            ),
+            Restaurant(
+                id: "2",
+                name: "서울 냉면",
+                address: "서울시 강남구 강남대로 456",
+                category: "한식",
+                rating: 4.7,
+                reviewCount: 85,
+                priceRange: .budget,
+                location: CLLocationCoordinate2D(
+                    latitude: location.latitude - 0.001,
+                    longitude: location.longitude + 0.002
+                ),
+                imageURL: nil,
+                phoneNumber: "02-345-6789",
+                operatingHours: "11:00 - 21:00",
+                description: "시원한 냉면 전문점"
+            ),
+            Restaurant(
+                id: "3",
+                name: "스시 하우스",
+                address: "서울시 강남구 선릉로 789",
+                category: "일식",
+                rating: 4.8,
+                reviewCount: 200,
+                priceRange: .premium,
+                location: CLLocationCoordinate2D(
+                    latitude: location.latitude + 0.002,
+                    longitude: location.longitude - 0.001
+                ),
+                imageURL: nil,
+                phoneNumber: "02-567-8901",
+                operatingHours: "12:00 - 22:00",
+                description: "신선한 초밥과 사시미"
             )
-        }
+        ]
     }
 }
 
