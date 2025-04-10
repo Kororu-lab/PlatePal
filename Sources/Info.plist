@@ -30,6 +30,16 @@
 	<string>We need your location to find nearby restaurants.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>리뷰 작성 시 사진 첨부를 위해 사진 라이브러리 접근 권한이 필요합니다.</string>
+	<key>NidAppName</key>
+	<string>PlatePal</string>
+	<key>NidClientID</key>
+	<string>dnljlxygz6</string>
+	<key>NidClientSecret</key>
+	<string>liEUTZYxky7Rzsnl5GYmWPIcKzlt6nvDieSdFV96</string>
+	<key>NidUrlScheme</key>
+	<string>naverlogin</string>
+	<key>NMFClientId</key>
+	<string>dnljlxygz6</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

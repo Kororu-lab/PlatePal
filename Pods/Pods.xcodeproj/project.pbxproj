@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		3516E9D4735D155BC036A4DB393966FC /* naveridlogin-sdk-ios */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 75CE31157FEFB4EACB18011E2D25C61C /* Build configuration list for PBXAggregateTarget "naveridlogin-sdk-ios" */;
+			buildPhases = (
+				5E05BCF0D92F31389F4CCB961DA341B4 /* [CP] Copy XCFrameworks */,
+			);
+			dependencies = (
+			);
+			name = "naveridlogin-sdk-ios";
+			productName = "naveridlogin-sdk-ios";
+		};
 		72E614C823EA09AB1AAE80D5CD8A4C58 /* NMapsGeometry */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = EB98AD101AB530610FAEE48FABDF7F57 /* Build configuration list for PBXAggregateTarget "NMapsGeometry" */;
@@ -16,6 +27,7 @@
 			dependencies = (
 			);
 			name = NMapsGeometry;
+			productName = NMapsGeometry;
 		};
 		8E049F5F4E3BDC647F924FEF22D49D90 /* NMapsMap */ = {
 			isa = PBXAggregateTarget;
@@ -24,34 +36,42 @@
 				B521269790554904B95202DE2D5AC59C /* [CP] Copy XCFrameworks */,
 			);
 			dependencies = (
-				258F097AFE79EE06421A954BF7063DC2 /* PBXTargetDependency */,
+				0F42F1C3A1A2E12582757CAA1B54FC6D /* PBXTargetDependency */,
 			);
 			name = NMapsMap;
+			productName = NMapsMap;
 		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		16D5CB44CA214842B4780464F9F27E7F /* Pods-PlatePal-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = CB7F60AF3B8802B321974E6585180C09 /* Pods-PlatePal-dummy.m */; };
-		4B9A4C7596773C4E48CE2210490E5235 /* Pods-PlatePal-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = BC51DE48CF5B3D130E02906FB67F15C9 /* Pods-PlatePal-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C9F9A7D75CCDA5DC882BA196B97B1FBE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */; };
+		B96ADF4926D1997F0541B1FE58079598 /* Pods-PlatePal-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = CB7F60AF3B8802B321974E6585180C09 /* Pods-PlatePal-dummy.m */; };
+		C044EA444F9EB844552E9D6759CF2FC0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */; };
+		DEA18846F02F9546BAC38E94E36BA003 /* Pods-PlatePal-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = BC51DE48CF5B3D130E02906FB67F15C9 /* Pods-PlatePal-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		7504BBDC9D4D03742238808AFC3E06DA /* PBXContainerItemProxy */ = {
+		88645C03D64E44BE85EA9FAE49A5ABAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3516E9D4735D155BC036A4DB393966FC;
+			remoteInfo = "naveridlogin-sdk-ios";
+		};
+		B56FB46D618D5E6184037D50C70677F4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 8E049F5F4E3BDC647F924FEF22D49D90;
 			remoteInfo = NMapsMap;
 		};
-		7F00C360A1E47BCFA7970B4BBEC51126 /* PBXContainerItemProxy */ = {
+		F6AC05DFB83B4774459DCCB14D87138C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 72E614C823EA09AB1AAE80D5CD8A4C58;
 			remoteInfo = NMapsGeometry;
 		};
-		9602E520517B96E0597B15E1594F827C /* PBXContainerItemProxy */ = {
+		FBE6F6EE70D98FFD623C7A057E3B81C0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
@@ -61,86 +81,79 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0970046F7060534BA9B286629593DA0C /* NMapsMap.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = NMapsMap.debug.xcconfig; sourceTree = "<group>"; };
 		0CDF849000A045A9A82DFE99221EFC2E /* Pods-PlatePal-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-PlatePal-acknowledgements.markdown"; sourceTree = "<group>"; };
 		13C418C8D5EF6D916017311274737B93 /* Pods-PlatePal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-PlatePal.debug.xcconfig"; sourceTree = "<group>"; };
-		1A326C79B1B897CBCFDC36BFF5174A43 /* NMapsGeometry.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = NMapsGeometry.debug.xcconfig; sourceTree = "<group>"; };
+		25BE71B1F1D8BF00261C93FBB0774982 /* NMapsMap-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "NMapsMap-xcframeworks.sh"; sourceTree = "<group>"; };
 		35B925AC713CF32C4EDB13FDF895D7A2 /* Pods-PlatePal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-PlatePal.release.xcconfig"; sourceTree = "<group>"; };
 		384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		420D0C60F0D83F017CFABEBA2C064331 /* NMapsMap.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = NMapsMap.debug.xcconfig; sourceTree = "<group>"; };
 		45D5523220A0DD41E8346685863641F7 /* Pods-PlatePal-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-PlatePal-frameworks.sh"; sourceTree = "<group>"; };
-		485FAE6318CCD7779377C7AA4A7B3528 /* NMapsGeometry.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; name = NMapsGeometry.xcframework; path = framework/NMapsGeometry.xcframework; sourceTree = "<group>"; };
-		4F0C55D25B9900DE7936740E68EFDFCF /* NMapsMap.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; name = NMapsMap.xcframework; path = framework/NMapsMap.xcframework; sourceTree = "<group>"; };
-		53BB18D8DE6118DEC0AAC01027DBECA8 /* NMapsMap.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = NMapsMap.release.xcconfig; sourceTree = "<group>"; };
+		52D80DC61DBC4718A034F25B36FA024D /* NMapsGeometry.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = NMapsGeometry.release.xcconfig; sourceTree = "<group>"; };
 		6A7558847F01B2E3084B82364B57FBEE /* Pods-PlatePal.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-PlatePal.modulemap"; sourceTree = "<group>"; };
+		6B7ACFE4DD3B32FEF70B34B14FDD0D2D /* naveridlogin-sdk-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "naveridlogin-sdk-ios.release.xcconfig"; sourceTree = "<group>"; };
 		776D754389BE6ADA3B8C00F010C09807 /* Pods-PlatePal-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-PlatePal-Info.plist"; sourceTree = "<group>"; };
-		7F89040B8DC7FC773592AA5FE110E9DF /* NMapsGeometry.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = NMapsGeometry.release.xcconfig; sourceTree = "<group>"; };
-		983FCEF2808419DF12F69DFEBD7685D4 /* NMapsMap-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "NMapsMap-xcframeworks.sh"; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		B932AEA7B6549BF40AD59A1422B9C3A6 /* Pods-PlatePal */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-PlatePal"; path = Pods_PlatePal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		93BDE20C94786077A442F53B52930F96 /* NMapsMap.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; name = NMapsMap.xcframework; path = framework/NMapsMap.xcframework; sourceTree = "<group>"; };
+		9C781F99FF2686A15C9D4CBBDC96FD61 /* NaverThirdPartyLogin.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; path = NaverThirdPartyLogin.xcframework; sourceTree = "<group>"; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		B932AEA7B6549BF40AD59A1422B9C3A6 /* Pods_PlatePal.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PlatePal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC51DE48CF5B3D130E02906FB67F15C9 /* Pods-PlatePal-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-PlatePal-umbrella.h"; sourceTree = "<group>"; };
+		C14CBBB166FD731B5502127496207509 /* naveridlogin-sdk-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "naveridlogin-sdk-ios.debug.xcconfig"; sourceTree = "<group>"; };
 		C188243C30341A5AFC592060AF81A4C8 /* Pods-PlatePal-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-PlatePal-acknowledgements.plist"; sourceTree = "<group>"; };
+		C2BF69224145F5408992BC6DC8CBC802 /* NMapsGeometry.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; name = NMapsGeometry.xcframework; path = framework/NMapsGeometry.xcframework; sourceTree = "<group>"; };
 		CB7F60AF3B8802B321974E6585180C09 /* Pods-PlatePal-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-PlatePal-dummy.m"; sourceTree = "<group>"; };
-		E101130795B024FC83E4F774AA209B18 /* NMapsGeometry-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "NMapsGeometry-xcframeworks.sh"; sourceTree = "<group>"; };
+		CC9B2500811CD12E879B5178C0001AB3 /* NMapsGeometry.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = NMapsGeometry.debug.xcconfig; sourceTree = "<group>"; };
+		D85D4188330C0DD508E8C9CD98984839 /* NMapsMap.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = NMapsMap.release.xcconfig; sourceTree = "<group>"; };
+		E72C981902935E4F55E1719D98AF7524 /* NMapsGeometry-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "NMapsGeometry-xcframeworks.sh"; sourceTree = "<group>"; };
+		F88E07AF6C6B387C6DC91432DF418D3E /* naveridlogin-sdk-ios-xcframeworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "naveridlogin-sdk-ios-xcframeworks.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		B5A268F656C3CE01583793A61E89EE41 /* Frameworks */ = {
+		4A50339BE14BD491DB8D810A057843C4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9F9A7D75CCDA5DC882BA196B97B1FBE /* Foundation.framework in Frameworks */,
+				C044EA444F9EB844552E9D6759CF2FC0 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		169A894F474781F666BE8D90408D3828 /* Support Files */ = {
+		03D43C79CAED640EA517FFF56E1270FF /* NMapsMap */ = {
 			isa = PBXGroup;
 			children = (
-				E101130795B024FC83E4F774AA209B18 /* NMapsGeometry-xcframeworks.sh */,
-				1A326C79B1B897CBCFDC36BFF5174A43 /* NMapsGeometry.debug.xcconfig */,
-				7F89040B8DC7FC773592AA5FE110E9DF /* NMapsGeometry.release.xcconfig */,
+				447765612DBED7C8AF72109794667975 /* Frameworks */,
+				8F1D6A2DDDE98CF04C88376868219C29 /* Support Files */,
+			);
+			path = NMapsMap;
+			sourceTree = "<group>";
+		};
+		0AA0D1639D3AD82B0433842A3F30B7CB /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				F88E07AF6C6B387C6DC91432DF418D3E /* naveridlogin-sdk-ios-xcframeworks.sh */,
+				C14CBBB166FD731B5502127496207509 /* naveridlogin-sdk-ios.debug.xcconfig */,
+				6B7ACFE4DD3B32FEF70B34B14FDD0D2D /* naveridlogin-sdk-ios.release.xcconfig */,
 			);
 			name = "Support Files";
-			path = "../Target Support Files/NMapsGeometry";
+			path = "../Target Support Files/naveridlogin-sdk-ios";
 			sourceTree = "<group>";
 		};
-		25B56312D79088C322C5B52238334BCC /* Pods */ = {
+		2BF8730661485F45709823778F8363CC /* naveridlogin-sdk-ios */ = {
 			isa = PBXGroup;
 			children = (
-				2FE65985C01476131D3AC219F92CC3CF /* NMapsGeometry */,
-				487B37947971C0C75B135158191A5547 /* NMapsMap */,
+				6C5AF1A587EEBFFE0DC77683A6475718 /* Frameworks */,
+				0AA0D1639D3AD82B0433842A3F30B7CB /* Support Files */,
 			);
-			name = Pods;
+			path = "naveridlogin-sdk-ios";
 			sourceTree = "<group>";
 		};
-		2ED541A35C7BD1778556550CF4846D2F /* Frameworks */ = {
+		447765612DBED7C8AF72109794667975 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4F0C55D25B9900DE7936740E68EFDFCF /* NMapsMap.xcframework */,
+				93BDE20C94786077A442F53B52930F96 /* NMapsMap.xcframework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		2FE65985C01476131D3AC219F92CC3CF /* NMapsGeometry */ = {
-			isa = PBXGroup;
-			children = (
-				DC955F600E602E5041F1000DC79753BB /* Frameworks */,
-				169A894F474781F666BE8D90408D3828 /* Support Files */,
-			);
-			name = NMapsGeometry;
-			path = NMapsGeometry;
-			sourceTree = "<group>";
-		};
-		487B37947971C0C75B135158191A5547 /* NMapsMap */ = {
-			isa = PBXGroup;
-			children = (
-				2ED541A35C7BD1778556550CF4846D2F /* Frameworks */,
-				A3E28C362EAC5C5A2CCC22EE5E2FDA30 /* Support Files */,
-			);
-			name = NMapsMap;
-			path = NMapsMap;
 			sourceTree = "<group>";
 		};
 		4E064C7DFED648695B14BB377D92532D /* Pods-PlatePal */ = {
@@ -160,23 +173,42 @@
 			path = "Target Support Files/Pods-PlatePal";
 			sourceTree = "<group>";
 		};
-		9972F77674CB17B4EDA89E90BA81DC01 /* Products */ = {
+		6C5AF1A587EEBFFE0DC77683A6475718 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B932AEA7B6549BF40AD59A1422B9C3A6 /* Pods-PlatePal */,
+				9C781F99FF2686A15C9D4CBBDC96FD61 /* NaverThirdPartyLogin.xcframework */,
 			);
-			name = Products;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		A3E28C362EAC5C5A2CCC22EE5E2FDA30 /* Support Files */ = {
+		8E62504738D5088FC3F5CBAE3A6C2E35 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				983FCEF2808419DF12F69DFEBD7685D4 /* NMapsMap-xcframeworks.sh */,
-				0970046F7060534BA9B286629593DA0C /* NMapsMap.debug.xcconfig */,
-				53BB18D8DE6118DEC0AAC01027DBECA8 /* NMapsMap.release.xcconfig */,
+				E72C981902935E4F55E1719D98AF7524 /* NMapsGeometry-xcframeworks.sh */,
+				CC9B2500811CD12E879B5178C0001AB3 /* NMapsGeometry.debug.xcconfig */,
+				52D80DC61DBC4718A034F25B36FA024D /* NMapsGeometry.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/NMapsGeometry";
+			sourceTree = "<group>";
+		};
+		8F1D6A2DDDE98CF04C88376868219C29 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				25BE71B1F1D8BF00261C93FBB0774982 /* NMapsMap-xcframeworks.sh */,
+				420D0C60F0D83F017CFABEBA2C064331 /* NMapsMap.debug.xcconfig */,
+				D85D4188330C0DD508E8C9CD98984839 /* NMapsMap.release.xcconfig */,
 			);
 			name = "Support Files";
 			path = "../Target Support Files/NMapsMap";
+			sourceTree = "<group>";
+		};
+		9972F77674CB17B4EDA89E90BA81DC01 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B932AEA7B6549BF40AD59A1422B9C3A6 /* Pods_PlatePal.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		ACDEE7DA4B648CF80DDCF1B71E597E0F /* Targets Support Files */ = {
@@ -187,12 +219,31 @@
 			name = "Targets Support Files";
 			sourceTree = "<group>";
 		};
+		B756060AB2A1CC1F097E168C237E9AF0 /* NMapsGeometry */ = {
+			isa = PBXGroup;
+			children = (
+				DC40D8B333CF818E3C0B221A9CF9C37D /* Frameworks */,
+				8E62504738D5088FC3F5CBAE3A6C2E35 /* Support Files */,
+			);
+			path = NMapsGeometry;
+			sourceTree = "<group>";
+		};
+		BAA16A3DE0661F33C4EE0A17C5ECAB9F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				2BF8730661485F45709823778F8363CC /* naveridlogin-sdk-ios */,
+				B756060AB2A1CC1F097E168C237E9AF0 /* NMapsGeometry */,
+				03D43C79CAED640EA517FFF56E1270FF /* NMapsMap */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		CF1408CF629C7361332E53B88F7BD30C = {
 			isa = PBXGroup;
 			children = (
 				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
 				D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */,
-				25B56312D79088C322C5B52238334BCC /* Pods */,
+				BAA16A3DE0661F33C4EE0A17C5ECAB9F /* Pods */,
 				9972F77674CB17B4EDA89E90BA81DC01 /* Products */,
 				ACDEE7DA4B648CF80DDCF1B71E597E0F /* Targets Support Files */,
 			);
@@ -206,10 +257,10 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		DC955F600E602E5041F1000DC79753BB /* Frameworks */ = {
+		DC40D8B333CF818E3C0B221A9CF9C37D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				485FAE6318CCD7779377C7AA4A7B3528 /* NMapsGeometry.xcframework */,
+				C2BF69224145F5408992BC6DC8CBC802 /* NMapsGeometry.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -225,11 +276,11 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		CE8FE932ABE064C3A49DD334C090E5FC /* Headers */ = {
+		B3326AA8713A9D4E4D3A84CB408BDA27 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B9A4C7596773C4E48CE2210490E5235 /* Pods-PlatePal-umbrella.h in Headers */,
+				DEA18846F02F9546BAC38E94E36BA003 /* Pods-PlatePal-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,22 +289,23 @@
 /* Begin PBXNativeTarget section */
 		6C87C14F69BE8551BA8E628E87B34359 /* Pods-PlatePal */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7E8774FE5B19094831C063EF149BDDCE /* Build configuration list for PBXNativeTarget "Pods-PlatePal" */;
+			buildConfigurationList = 4E38EA3584A08CD958DF68749D93F7C4 /* Build configuration list for PBXNativeTarget "Pods-PlatePal" */;
 			buildPhases = (
-				CE8FE932ABE064C3A49DD334C090E5FC /* Headers */,
-				531F8AD777EC6B4F52B7747A2D74DB18 /* Sources */,
-				B5A268F656C3CE01583793A61E89EE41 /* Frameworks */,
-				9BB5DFA8129B418E7A0744A3C987BF6C /* Resources */,
+				B3326AA8713A9D4E4D3A84CB408BDA27 /* Headers */,
+				2AA291ACCB1234D0F8C5B8A93796C77B /* Sources */,
+				4A50339BE14BD491DB8D810A057843C4 /* Frameworks */,
+				5314012DCC0DF6562627D6C4D7A3392D /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				6295D411891C34FDCA4632A2CE8BDC5F /* PBXTargetDependency */,
-				0E716BFE3E07BF232C1E2926C4DA1D60 /* PBXTargetDependency */,
+				0D1928861CA6C01BFBB1CF616758CFC4 /* PBXTargetDependency */,
+				AB86939A91B949E2D005B9B30E8B4A88 /* PBXTargetDependency */,
+				E71DA3BE0E13C452F94F89727ED4DE46 /* PBXTargetDependency */,
 			);
 			name = "Pods-PlatePal";
 			productName = Pods_PlatePal;
-			productReference = B932AEA7B6549BF40AD59A1422B9C3A6 /* Pods-PlatePal */;
+			productReference = B932AEA7B6549BF40AD59A1422B9C3A6 /* Pods_PlatePal.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -262,8 +314,9 @@
 		BFDFE7DC352907FC980B868725387E98 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1600;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 1630;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 12.0";
@@ -274,12 +327,11 @@
 				en,
 			);
 			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
-			minimizedProjectReferenceProxies = 0;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = 9972F77674CB17B4EDA89E90BA81DC01 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				3516E9D4735D155BC036A4DB393966FC /* naveridlogin-sdk-ios */,
 				72E614C823EA09AB1AAE80D5CD8A4C58 /* NMapsGeometry */,
 				8E049F5F4E3BDC647F924FEF22D49D90 /* NMapsMap */,
 				6C87C14F69BE8551BA8E628E87B34359 /* Pods-PlatePal */,
@@ -288,7 +340,7 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		9BB5DFA8129B418E7A0744A3C987BF6C /* Resources */ = {
+		5314012DCC0DF6562627D6C4D7A3392D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -306,13 +358,38 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/NMapsGeometry/NMapsGeometry-xcframeworks-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy XCFrameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/NMapsGeometry/NMapsGeometry-xcframeworks-output-files.xcfilelist",
 			);
+			outputPaths = (
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/NMapsGeometry/NMapsGeometry-xcframeworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5E05BCF0D92F31389F4CCB961DA341B4 /* [CP] Copy XCFrameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/naveridlogin-sdk-ios/naveridlogin-sdk-ios-xcframeworks-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy XCFrameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/naveridlogin-sdk-ios/naveridlogin-sdk-ios-xcframeworks-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/naveridlogin-sdk-ios/naveridlogin-sdk-ios-xcframeworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B521269790554904B95202DE2D5AC59C /* [CP] Copy XCFrameworks */ = {
@@ -323,9 +400,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/NMapsMap/NMapsMap-xcframeworks-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy XCFrameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/NMapsMap/NMapsMap-xcframeworks-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -335,46 +416,52 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		531F8AD777EC6B4F52B7747A2D74DB18 /* Sources */ = {
+		2AA291ACCB1234D0F8C5B8A93796C77B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				16D5CB44CA214842B4780464F9F27E7F /* Pods-PlatePal-dummy.m in Sources */,
+				B96ADF4926D1997F0541B1FE58079598 /* Pods-PlatePal-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0E716BFE3E07BF232C1E2926C4DA1D60 /* PBXTargetDependency */ = {
+		0D1928861CA6C01BFBB1CF616758CFC4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = NMapsGeometry;
+			target = 72E614C823EA09AB1AAE80D5CD8A4C58 /* NMapsGeometry */;
+			targetProxy = FBE6F6EE70D98FFD623C7A057E3B81C0 /* PBXContainerItemProxy */;
+		};
+		0F42F1C3A1A2E12582757CAA1B54FC6D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = NMapsGeometry;
+			target = 72E614C823EA09AB1AAE80D5CD8A4C58 /* NMapsGeometry */;
+			targetProxy = F6AC05DFB83B4774459DCCB14D87138C /* PBXContainerItemProxy */;
+		};
+		AB86939A91B949E2D005B9B30E8B4A88 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = NMapsMap;
 			target = 8E049F5F4E3BDC647F924FEF22D49D90 /* NMapsMap */;
-			targetProxy = 7504BBDC9D4D03742238808AFC3E06DA /* PBXContainerItemProxy */;
+			targetProxy = B56FB46D618D5E6184037D50C70677F4 /* PBXContainerItemProxy */;
 		};
-		258F097AFE79EE06421A954BF7063DC2 /* PBXTargetDependency */ = {
+		E71DA3BE0E13C452F94F89727ED4DE46 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = NMapsGeometry;
-			target = 72E614C823EA09AB1AAE80D5CD8A4C58 /* NMapsGeometry */;
-			targetProxy = 7F00C360A1E47BCFA7970B4BBEC51126 /* PBXContainerItemProxy */;
-		};
-		6295D411891C34FDCA4632A2CE8BDC5F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = NMapsGeometry;
-			target = 72E614C823EA09AB1AAE80D5CD8A4C58 /* NMapsGeometry */;
-			targetProxy = 9602E520517B96E0597B15E1594F827C /* PBXContainerItemProxy */;
+			name = "naveridlogin-sdk-ios";
+			target = 3516E9D4735D155BC036A4DB393966FC /* naveridlogin-sdk-ios */;
+			targetProxy = 88645C03D64E44BE85EA9FAE49A5ABAE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		054E51A885E107CDE48497C43CBA2A76 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7F89040B8DC7FC773592AA5FE110E9DF /* NMapsGeometry.release.xcconfig */;
+			baseConfigurationReference = 52D80DC61DBC4718A034F25B36FA024D /* NMapsGeometry.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -387,12 +474,12 @@
 		};
 		2A5A07E7ECD8F932FC105B66E699965B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1A326C79B1B897CBCFDC36BFF5174A43 /* NMapsGeometry.debug.xcconfig */;
+			baseConfigurationReference = CC9B2500811CD12E879B5178C0001AB3 /* NMapsGeometry.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -402,65 +489,22 @@
 			};
 			name = Debug;
 		};
-		39E59210C6B682E595122337F6FB5B20 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 35B925AC713CF32C4EDB13FDF895D7A2 /* Pods-PlatePal.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				INFOPLIST_FILE = "Target Support Files/Pods-PlatePal/Pods-PlatePal-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-PlatePal/Pods-PlatePal.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		3BA245A8F129506E1E684418F37F55BD /* Debug */ = {
+		456DBEE6E4C9BC82ACC80A123FB491AA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 13C418C8D5EF6D916017311274737B93 /* Pods-PlatePal.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = "Target Support Files/Pods-PlatePal/Pods-PlatePal-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -468,6 +512,7 @@
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-PlatePal/Pods-PlatePal.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -481,14 +526,33 @@
 			};
 			name = Debug;
 		};
+		5069D0A680906C72D26F89BD0C2B12A7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6B7ACFE4DD3B32FEF70B34B14FDD0D2D /* naveridlogin-sdk-ios.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		5D3D4A8485CE25FA0EB43FD934BDFDE4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 53BB18D8DE6118DEC0AAC01027DBECA8 /* NMapsMap.release.xcconfig */;
+			baseConfigurationReference = D85D4188330C0DD508E8C9CD98984839 /* NMapsMap.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -534,6 +598,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -557,7 +622,6 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -600,6 +664,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -619,7 +684,6 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -627,14 +691,70 @@
 			};
 			name = Release;
 		};
+		9E370ABE2ECAE1481C4B3DC6DB2B3C71 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C14CBBB166FD731B5502127496207509 /* naveridlogin-sdk-ios.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C09FF0B10B5DC2D346EA059B0759CC07 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 35B925AC713CF32C4EDB13FDF895D7A2 /* Pods-PlatePal.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "Target Support Files/Pods-PlatePal/Pods-PlatePal-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-PlatePal/Pods-PlatePal.modulemap";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 		FAB9677BCDB7996B80F291B474EB80E9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0970046F7060534BA9B286629593DA0C /* NMapsMap.debug.xcconfig */;
+			baseConfigurationReference = 420D0C60F0D83F017CFABEBA2C064331 /* NMapsMap.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -656,6 +776,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		4E38EA3584A08CD958DF68749D93F7C4 /* Build configuration list for PBXNativeTarget "Pods-PlatePal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				456DBEE6E4C9BC82ACC80A123FB491AA /* Debug */,
+				C09FF0B10B5DC2D346EA059B0759CC07 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		73E737D5F21341C24A13EBC70CD8D471 /* Build configuration list for PBXAggregateTarget "NMapsMap" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -665,11 +794,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7E8774FE5B19094831C063EF149BDDCE /* Build configuration list for PBXNativeTarget "Pods-PlatePal" */ = {
+		75CE31157FEFB4EACB18011E2D25C61C /* Build configuration list for PBXAggregateTarget "naveridlogin-sdk-ios" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3BA245A8F129506E1E684418F37F55BD /* Debug */,
-				39E59210C6B682E595122337F6FB5B20 /* Release */,
+				9E370ABE2ECAE1481C4B3DC6DB2B3C71 /* Debug */,
+				5069D0A680906C72D26F89BD0C2B12A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
