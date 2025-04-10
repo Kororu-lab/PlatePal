@@ -1,7 +1,8 @@
 .DS_Store
 /.build
 /Packages
-/*.xcodeproj
+# Allow Xcode project files
+# /*.xcodeproj 
 xcuserdata/
 DerivedData/
 .swiftpm/config/registries.json
@@ -37,11 +38,12 @@ xcuserdata/
 # Swift Package Manager
 .build/
 Package.pins
-Package.resolved
+# Package.resolved
 
-# CocoaPods
-Pods/
-*.xcworkspace
+# CocoaPods - Include all CocoaPods files for easier setup
+# Uncomment these lines if you want to exclude Pods
+# Pods/
+# *.xcworkspace
 
 # Carthage
 Carthage/Build/

@@ -76,4 +76,52 @@ This project is licensed under the Creative Commons Attribution-NonCommercial 4.
 - The copyright holder (Kororu-lab) reserves the right to modify the license terms in the future
 - Usage of the Naver Maps API is subject to Naver Cloud Platform's terms and conditions
 
-For more details, see the [LICENSE](LICENSE) file. 
+For more details, see the [LICENSE](LICENSE) file.
+
+## Recent Modifications
+
+### Code Organization Updates (April 2024)
+
+1. **Recommendation Engine Integration:**
+   - The separate RecommendationEngine class has been integrated directly into RecommendationViewModel
+   - This resolves module scope issues and simplifies the codebase
+
+2. **Repository Structure:**
+   - Modified .gitignore to include the Pods directory and Xcode workspace
+   - These files are now included in the repository to make it easier to run the project on different machines
+
+3. **Build System:**
+   - Package.swift has been updated to be compatible with CocoaPods
+   - Added clear documentation throughout the code for easier setup
+
+4. **Known Issues:**
+   - If you encounter `nil requires a contextual type` errors, make sure to use explicit type annotations (e.g., `nil as URL?`)
+   - Some Xcode warnings may appear due to the mix of SwiftUI and UIKit components
+
+## Project Structure
+
+- `Sources/Models/`: Data models
+- `Sources/Views/`: SwiftUI views
+- `Sources/ViewModels/`: View models for business logic
+- `Sources/Services/`: Service classes for APIs and utilities
+- `Sources/Resources/`: Assets and resources
+
+## Dependencies
+
+- NMapsMap: For displaying maps and locations
+- CoreLocation: For handling location services
+- SwiftUI: For the UI framework
+
+## Development Setup Issues
+
+If you encounter any issues during setup:
+
+1. Make sure you're opening the `.xcworkspace` file, not the `.xcodeproj` file
+2. Try cleaning the build folder (Shift + Cmd + K in Xcode) and rebuilding
+3. If CocoaPods-related issues persist, try removing the Pods directory and running `pod install` again
+```bash
+rm -rf Pods
+pod install
+```
+
+4. If you see "Missing file" errors for RecommendationEngine, the functionality has been integrated directly into the RecommendationViewModel. 
