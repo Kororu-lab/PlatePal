@@ -32,6 +32,19 @@ struct ContentView: View {
                     Label("Settings", systemImage: "gear")
                 }
         }
+        .background(Color.white)
+        .onAppear {
+            let tabBarAppearance = UITabBarAppearance()
+            tabBarAppearance.configureWithOpaqueBackground()
+            tabBarAppearance.backgroundColor = .white
+            
+            let separator = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
+            separator.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 1)
+            separator.backgroundColor = .gray
+            
+            UITabBar.appearance().standardAppearance = tabBarAppearance
+            UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+        }
     }
 }
 

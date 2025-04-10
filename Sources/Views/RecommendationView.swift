@@ -13,7 +13,14 @@ struct RecommendationView: View {
                 MapView(viewModel: viewModel, locationManager: locationManager)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .edgesIgnoringSafeArea(.all)
-                    .background(Color.gray) // Background color to help identify rendering issues
+                    .background(Color.white) // Solid background color
+                    .overlay( // Add border at bottom
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundColor(Color.gray)
+                            .offset(y: 0),
+                        alignment: .bottom
+                    )
                 
                 VStack {
                     Spacer()
@@ -38,6 +45,7 @@ struct RecommendationView: View {
                 }
             }
             .navigationTitle("Restaurant Recommendations")
+            .background(Color.white) // Add background to whole view
         }
     }
 }
@@ -67,90 +75,57 @@ struct MapView: UIViewRepresentable {
     let markerStore = MarkerStore()
     
     func makeUIView(context: Context) -> NMFNaverMapView {
-        let mapView = NMFNaverMapView()
-        mapView.showZoomControls = true
-        mapView.showCompass = true
-        mapView.showScaleBar = true
-        mapView.showLocationButton = false // Disable location button to prevent auto-location
+        // Pre-initialize map view for faster loading
+        let mapView = NMFNaverMapView(frame: UIScreen.main.bounds)
         
-        // Configure map
-        mapView.mapView.positionMode = .disabled // Disable positioning mode
+        // Enable only essential features to speed up loading
+        mapView.showZoomControls = false  // Disable initially
+        mapView.showCompass = false       // Disable initially
+        mapView.showScaleBar = false      // Disable initially
+        mapView.showLocationButton = false // Keep disabled
+        
+        // Configure map with minimal settings first
+        mapView.mapView.positionMode = .disabled
         mapView.mapView.zoomLevel = 15
-        
-        // === FIX FOR MAP NOT SHOWING ===
-        // Set map type explicitly
         mapView.mapView.mapType = .basic
-        
-        // Set background color
-        mapView.mapView.backgroundColor = UIColor.lightGray
-        
-        // Ensure the layer is visible and not hidden
+        mapView.mapView.backgroundColor = UIColor.white
         mapView.mapView.layer.isHidden = false
-        
-        // Force the map to be visible
         mapView.mapView.isHidden = false
         
-        // Enable all necessary features
-        mapView.mapView.liteModeEnabled = false
-        mapView.mapView.isIndoorMapEnabled = true
-        
-        // Set content insets to zero to ensure full visibility
+        // Optimize for performance
+        mapView.mapView.liteModeEnabled = true  // Enable lite mode for faster loading
+        mapView.mapView.isIndoorMapEnabled = false // Disable indoor map initially
         mapView.mapView.contentInset = UIEdgeInsets.zero
         
-        // End of map display fixes
-        
-        // Set delegates for events
-        #if DEBUG
+        // Set delegates
         mapView.mapView.touchDelegate = context.coordinator
         mapView.mapView.addOptionDelegate(delegate: context.coordinator)
-        print("Naver Map initialized and delegates set")
-        #endif
         
-        // Force camera position to Gangnam Station immediately
+        // Force immediate position to Gangnam Station
         let gangnamStation = NMGLatLng(lat: 37.498095, lng: 127.027610)
-        
-        // Use a series of camera updates with increasing strength
-        // First immediate update with no animation
         let immediateUpdate = NMFCameraUpdate(scrollTo: gangnamStation)
         immediateUpdate.animation = .none
         mapView.mapView.moveCamera(immediateUpdate)
         
         print("Setting initial camera position to Gangnam Station")
         
-        // Then schedule another update with animation, in case first one didn't take
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            let cameraUpdate = NMFCameraUpdate(scrollTo: gangnamStation)
-            cameraUpdate.animation = .easeIn
-            cameraUpdate.animationDuration = 0.5
-            mapView.mapView.moveCamera(cameraUpdate)
-            
-            // Add marker for Gangnam Station
-            let marker = NMFMarker()
-            marker.position = gangnamStation
-            marker.mapView = mapView.mapView
-            marker.captionText = "강남역"
-            marker.iconImage = NMF_MARKER_IMAGE_BLUE
-            marker.width = 40
-            marker.height = 40
-            
-            // Update with initial restaurants
-            updateRestaurantMarkers(on: mapView.mapView, with: viewModel.restaurants)
-            
-            print("Map should be centered on Gangnam Station now")
-        }
+        // Update restaurant markers immediately
+        updateRestaurantMarkers(on: mapView.mapView, with: viewModel.restaurants)
         
-        // And finally, a third update to really make sure it sticks
+        // Enable additional features after a short delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            // Force Gangnam Station again with zoom
+            mapView.showZoomControls = true
+            mapView.showCompass = true
+            mapView.showScaleBar = true
+            mapView.mapView.isIndoorMapEnabled = true
+            mapView.mapView.liteModeEnabled = false
+            
+            // Final camera update
             let finalUpdate = NMFCameraUpdate(scrollTo: gangnamStation, zoomTo: 15)
             finalUpdate.animation = .none
             mapView.mapView.moveCamera(finalUpdate)
             print("Final camera position force to Gangnam Station")
         }
-        
-        // Force render map and layout
-        mapView.setNeedsLayout()
-        mapView.layoutIfNeeded()
         
         return mapView
     }
