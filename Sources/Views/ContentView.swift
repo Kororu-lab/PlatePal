@@ -204,6 +204,22 @@ struct SettingsView: View {
                     }
                 }
                 
+                Section(header: Text("추천 시스템 설명"), footer: Text("음식점 추천은 당신의 즐겨찾기와 가격대, 위치 등 선호도를 기반으로 맞춤형으로 제공됩니다. 더 많은 음식점을 즐겨찾기에 추가할수록 더 나은 추천을 받을 수 있습니다.")) {
+                    HStack {
+                        Text("추천 알고리즘")
+                        Spacer()
+                        Text("협업 필터링")
+                            .foregroundColor(.gray)
+                    }
+                    
+                    HStack {
+                        Text("개인화 기준")
+                        Spacer()
+                        Text("카테고리, 가격대, 거리")
+                            .foregroundColor(.gray)
+                    }
+                }
+                
                 Section(header: Text("정보")) {
                     HStack {
                         Text("버전")

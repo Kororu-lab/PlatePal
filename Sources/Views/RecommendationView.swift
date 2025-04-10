@@ -290,12 +290,27 @@ struct RecommendationCard: View {
                 }
             }
             
+            // Price Range tag with localized text
             Text(restaurant.priceRange.rawValue == "Budget" ? "저렴함" :
                 (restaurant.priceRange.rawValue == "Medium" ? "보통" : "고급"))
                 .font(.caption)
                 .padding(4)
                 .background(Color.green.opacity(0.2))
                 .cornerRadius(4)
+            
+            // Recommendation reason section
+            VStack(alignment: .leading, spacing: 4) {
+                if let similarFavorites = getSimilarFavorites(to: restaurant) {
+                    Text("추천 이유:")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    
+                    Text("\(similarFavorites)와(과) 비슷한 \(restaurant.category) 음식점")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+            }
+            .padding(.top, 4)
             
             HStack {
                 Spacer()
@@ -336,6 +351,20 @@ struct RecommendationCard: View {
         .background(Color.white)
         .cornerRadius(12)
         .shadow(radius: 5)
+    }
+    
+    // Helper function to find similar favorites for personalized recommendation explanation
+    private func getSimilarFavorites(to restaurant: Restaurant) -> String? {
+        let similarFavorites = viewModel.favoriteRestaurants
+            .filter { $0.category == restaurant.category }
+            .prefix(2)  // Get at most 2 similar restaurants for display
+            .map { $0.name }
+        
+        if !similarFavorites.isEmpty {
+            return similarFavorites.joined(separator: ", ")
+        }
+        
+        return nil
     }
 }
 
