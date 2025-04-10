@@ -82,11 +82,17 @@ struct MapView: UIViewRepresentable {
         mapView.showZoomControls = false  // Disable initially
         mapView.showCompass = false       // Disable initially
         mapView.showScaleBar = false      // Disable initially
-        mapView.showLocationButton = true // Re-enable location button
+        mapView.showLocationButton = true // Keep location button enabled
         
         // Configure map with minimal settings first
-        mapView.mapView.positionMode = .normal // Allow positioning
+        mapView.mapView.positionMode = .disabled // Disable position tracking by default
+        
+        // Set zoom constraints to restrict view to smaller area
+        mapView.mapView.minZoomLevel = 7  // Don't allow zooming out too far
+        mapView.mapView.maxZoomLevel = 18
         mapView.mapView.zoomLevel = 15
+        
+        // Better performance settings
         mapView.mapView.mapType = .basic
         mapView.mapView.backgroundColor = UIColor.white
         mapView.mapView.layer.isHidden = false
@@ -97,9 +103,19 @@ struct MapView: UIViewRepresentable {
         mapView.mapView.isIndoorMapEnabled = false // Disable indoor map initially
         mapView.mapView.contentInset = UIEdgeInsets.zero
         
-        // Set delegates
+        // Restrict camera movement to South Korea region
+        let southWest = NMGLatLng(lat: 33.0, lng: 124.0)  // South Korea southwest corner
+        let northEast = NMGLatLng(lat: 38.0, lng: 132.0)  // South Korea northeast corner
+        let bounds = NMGLatLngBounds(southWest: southWest, northEast: northEast)
+        mapView.mapView.extent = bounds
+        
+        // Custom location button handler
         mapView.mapView.touchDelegate = context.coordinator
         mapView.mapView.addOptionDelegate(delegate: context.coordinator)
+        
+        // Handle location overlay directly
+        let locationOverlay = mapView.mapView.locationOverlay
+        locationOverlay.hidden = true // Hide initially
         
         // Force immediate position to Gangnam Station
         let gangnamStation = NMGLatLng(lat: 37.498095, lng: 127.027610)
@@ -113,18 +129,21 @@ struct MapView: UIViewRepresentable {
         updateRestaurantMarkers(on: mapView.mapView, with: viewModel.restaurants)
         
         // Enable additional features after a short delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {  // Reduced delay
             mapView.showZoomControls = true
             mapView.showCompass = true
             mapView.showScaleBar = true
-            mapView.mapView.isIndoorMapEnabled = true
+            mapView.mapView.isIndoorMapEnabled = false // Keep disabled for better performance
             mapView.mapView.liteModeEnabled = false
             
-            // Final camera update
+            // Force Gangnam Station position again
             let finalUpdate = NMFCameraUpdate(scrollTo: gangnamStation, zoomTo: 15)
             finalUpdate.animation = .none
             mapView.mapView.moveCamera(finalUpdate)
             print("Final camera position force to Gangnam Station")
+            
+            // Custom location button handler by implementing a delegate
+            context.coordinator.gangnamStation = gangnamStation
         }
         
         return mapView
@@ -178,6 +197,7 @@ struct MapView: UIViewRepresentable {
     
     class Coordinator: NSObject, NMFMapViewTouchDelegate, NMFMapViewOptionDelegate {
         var parent: MapView
+        var gangnamStation: NMGLatLng?
         
         init(_ parent: MapView) {
             self.parent = parent
@@ -204,6 +224,31 @@ struct MapView: UIViewRepresentable {
                 print("Map type: \(mapView.mapType.rawValue)")
                 print("Map frame: \(mapView.frame)")
             }
+        }
+        
+        // Handle location button taps
+        func mapView(_ mapView: NMFMapView, didTapLocationButton: Bool) -> Bool {
+            if mapView.positionMode == .disabled {
+                // If disabled, enable tracking and move to user location
+                mapView.positionMode = .normal
+                
+                if let location = parent.locationManager.location {
+                    let coord = NMGLatLng(lat: location.coordinate.latitude, lng: location.coordinate.longitude)
+                    let cameraUpdate = NMFCameraUpdate(scrollTo: coord)
+                    cameraUpdate.animation = .easeIn
+                    mapView.moveCamera(cameraUpdate)
+                }
+            } else {
+                // If enabled, disable tracking and return to Gangnam
+                mapView.positionMode = .disabled
+                
+                if let gangnamStation = gangnamStation {
+                    let returnUpdate = NMFCameraUpdate(scrollTo: gangnamStation)
+                    returnUpdate.animation = .easeIn
+                    mapView.moveCamera(returnUpdate)
+                }
+            }
+            return true
         }
     }
 }

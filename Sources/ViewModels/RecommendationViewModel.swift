@@ -30,63 +30,80 @@ class RecommendationViewModel: ObservableObject {
     }
     
     private func loadSampleData() {
-        // Load sample data immediately so map has something to display
-        restaurants = [
+        // Sample data - all restaurants located in Gangnam, Seoul
+        let sampleRestaurants = [
             Restaurant(
-                id: "1",
-                name: "맛있는 돈까스",
-                address: "서울시 강남구 테헤란로 123",
-                category: "일식",
+                id: UUID().uuidString,
+                name: "국수나무 강남점",
+                address: "서울 강남구 강남대로 340",
+                category: "한식",
                 rating: 4.5,
                 reviewCount: 120,
                 priceRange: .medium,
-                location: CLLocationCoordinate2D(latitude: 37.5665, longitude: 126.9780),
+                location: CLLocationCoordinate2D(latitude: 37.498095, longitude: 127.027610), // Gangnam Station
                 imageURL: nil,
-                phoneNumber: "02-123-4567",
+                phoneNumber: "02-1234-5678",
                 operatingHours: "10:00 - 22:00",
-                description: "맛있는 돈까스 전문점"
+                description: "맛있는 국수와 만두를 즐길 수 있는 곳입니다."
             ),
             Restaurant(
-                id: "2",
-                name: "서울 냉면",
-                address: "서울시 강남구 강남대로 456",
+                id: UUID().uuidString,
+                name: "봉피양 강남점",
+                address: "서울 강남구 테헤란로 152",
                 category: "한식",
-                rating: 4.7,
-                reviewCount: 85,
-                priceRange: .medium,
-                location: CLLocationCoordinate2D(latitude: 37.5645, longitude: 126.9810),
+                rating: 4.8,
+                reviewCount: 250,
+                priceRange: .premium,
+                location: CLLocationCoordinate2D(latitude: 37.500582, longitude: 127.036203), // Near Gangnam Station
                 imageURL: nil,
-                phoneNumber: "02-345-6789",
-                operatingHours: "11:00 - 21:00",
-                description: "시원한 냉면 전문점"
+                phoneNumber: "02-987-6543",
+                operatingHours: "11:30 - 21:30",
+                description: "전통 한식을 현대적으로 재해석한 맛집입니다."
             ),
             Restaurant(
-                id: "3",
-                name: "스시 하우스",
-                address: "서울시 강남구 선릉로 789",
-                category: "일식",
-                rating: 4.8,
-                reviewCount: 200,
-                priceRange: .premium,
-                location: CLLocationCoordinate2D(latitude: 37.5685, longitude: 126.9760),
+                id: UUID().uuidString,
+                name: "버거킹 강남역점",
+                address: "서울 강남구 강남대로 396",
+                category: "패스트푸드",
+                rating: 4.2,
+                reviewCount: 180,
+                priceRange: .budget,
+                location: CLLocationCoordinate2D(latitude: 37.496323, longitude: 127.028981), // Another location near Gangnam
                 imageURL: nil,
-                phoneNumber: "02-567-8901",
-                operatingHours: "12:00 - 22:00",
-                description: "신선한 초밥과 사시미"
+                phoneNumber: "02-555-7890",
+                operatingHours: "24시간",
+                description: "맛있는 햄버거와 사이드 메뉴를 제공합니다."
             )
         ]
+        
+        self.restaurants = sampleRestaurants
+        
+        // Set initial recommendation if none exists
+        if currentRecommendation == nil && !restaurants.isEmpty {
+            recommendRestaurant()
+        }
     }
     
     func fetchRestaurants() {
-        guard let location = locationManager.location?.coordinate else { return }
+        guard let location = locationManager.location?.coordinate else {
+            // If no location is available, use Gangnam Station
+            let gangnamLocation = CLLocationCoordinate2D(latitude: 37.498095, longitude: 127.027610)
+            fetchRestaurantsNear(gangnamLocation)
+            return
+        }
         
+        fetchRestaurantsNear(location)
+    }
+    
+    private func fetchRestaurantsNear(_ location: CLLocationCoordinate2D) {
         isLoading = true
         error = nil
         
         Task {
             do {
+                // Use "맛집" (restaurant) as default search term
                 let restaurants = try await naverMapService.searchRestaurants(
-                    query: "음식점",
+                    query: "맛집",
                     location: location
                 )
                 
