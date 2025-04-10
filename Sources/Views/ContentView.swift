@@ -35,7 +35,7 @@ struct ContentView: View {
                     Label("목록", systemImage: "list.bullet")
                 }
             
-            SettingsView()
+            AppSettingsView()
                 .tabItem {
                     Label("설정", systemImage: "gear")
                 }
@@ -66,41 +66,60 @@ struct RestaurantListView: View {
     
     var body: some View {
         NavigationView {
-            List {
-                if viewModel.restaurants.isEmpty {
-                    Text("식당 정보가 없습니다")
-                } else {
-                    ForEach(viewModel.restaurants) { restaurant in
-                        Button(action: {
-                            selectedRestaurant = restaurant
-                            showingDetails = true
-                        }) {
-                            VStack(alignment: .leading) {
-                                Text(restaurant.name)
-                                    .font(.headline)
-                                    .foregroundColor(.primary)
-                                Text(restaurant.address)
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                HStack {
-                                    Text(restaurant.category)
-                                        .font(.caption)
-                                        .foregroundColor(.blue)
-                                    Spacer()
-                                    Text("★ \(String(format: "%.1f", restaurant.rating))")
-                                        .font(.caption)
-                                        .foregroundColor(.orange)
+            VStack {
+                List {
+                    if viewModel.restaurants.isEmpty {
+                        Text("식당 정보가 없습니다")
+                    } else {
+                        ForEach(viewModel.restaurants) { restaurant in
+                            Button(action: {
+                                selectedRestaurant = restaurant
+                                showingDetails = true
+                            }) {
+                                VStack(alignment: .leading) {
+                                    Text(restaurant.name)
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                    
+                                    Text(restaurant.address)
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
+                                    
+                                    HStack {
+                                        Text(restaurant.category)
+                                            .font(.caption)
+                                            .foregroundColor(.blue)
+                                        Spacer()
+                                        Text("★ \(String(format: "%.1f", restaurant.rating))")
+                                            .font(.caption)
+                                            .foregroundColor(.orange)
+                                    }
+                                    
+                                    if viewModel.isDebugMode {
+                                        HStack {
+                                            Text("거리: \(Int(restaurant.distance))m")
+                                                .font(.caption)
+                                                .foregroundColor(.gray)
+                                            
+                                            Spacer()
+                                            
+                                            Text("점수: \(String(format: "%.2f", viewModel.getRestaurantScore(restaurant)))")
+                                                .font(.caption)
+                                                .foregroundColor(.blue)
+                                        }
+                                        .padding(.top, 2)
+                                    }
                                 }
+                                .padding(.vertical, 4)
                             }
-                            .padding(.vertical, 4)
                         }
                     }
                 }
-            }
-            .navigationTitle("식당 목록")
-            .sheet(isPresented: $showingDetails) {
-                if let restaurant = selectedRestaurant {
-                    RestaurantDetailView(restaurant: restaurant)
+                .navigationTitle("식당 목록")
+                .sheet(isPresented: $showingDetails) {
+                    if let restaurant = selectedRestaurant {
+                        RestaurantDetailView(restaurant: restaurant)
+                    }
                 }
             }
         }
@@ -168,11 +187,12 @@ struct RestaurantDetailView: View {
 }
 
 // MARK: - Settings View
-struct SettingsView: View {
+struct AppSettingsView: View {
     @AppStorage("priceRange") private var priceRange: PriceRangeFallback = .medium
     @AppStorage("maxDistance") private var maxDistance: Double = 2000
     @AppStorage("showFavorites") private var showFavorites = true
     @AppStorage("showDownvoted") private var showDownvoted = false
+    @EnvironmentObject var viewModel: RecommendationViewModel
     
     var body: some View {
         NavigationView {
@@ -188,19 +208,29 @@ struct SettingsView: View {
                     VStack(alignment: .leading) {
                         Text("최대 거리: \(Int(maxDistance))m")
                         Slider(value: $maxDistance, in: 500...5000, step: 100)
+                            .tint(Color.blue)
                     }
                     
                     Toggle("즐겨찾기 표시", isOn: $showFavorites)
+                        .tint(Color.blue)
+                        
                     Toggle("비추천 표시", isOn: $showDownvoted)
+                        .tint(Color.blue)
+                        
+                    Toggle("디버그 모드", isOn: Binding(
+                        get: { viewModel.isDebugMode },
+                        set: { viewModel.isDebugMode = $0 }
+                    ))
+                    .tint(Color.blue)
                 }
                 
                 Section(header: Text("내 목록")) {
                     NavigationLink("즐겨찾는 음식점") {
-                        FavoriteListView()
+                        FavoriteListView(viewModel: viewModel)
                     }
                     
                     NavigationLink("비추천 장소") {
-                        DownvotedListView()
+                        DownvotedListView(viewModel: viewModel)
                     }
                 }
                 
@@ -234,87 +264,8 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - Favorite and Downvoted Lists
-struct FavoriteListView: View {
-    @EnvironmentObject var viewModel: RecommendationViewModel
-    
-    var body: some View {
-        List {
-            if viewModel.favoriteRestaurants.isEmpty {
-                Text("즐겨찾기에 추가된 음식점이 없습니다")
-                    .foregroundColor(.gray)
-                    .padding()
-            } else {
-                ForEach(viewModel.favoriteRestaurants) { restaurant in
-                    VStack(alignment: .leading) {
-                        Text(restaurant.name)
-                            .font(.headline)
-                        Text(restaurant.address)
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                        HStack {
-                            Text(restaurant.category)
-                                .font(.caption)
-                                .foregroundColor(.blue)
-                            Spacer()
-                            Text("★ \(String(format: "%.1f", restaurant.rating))")
-                                .font(.caption)
-                                .foregroundColor(.orange)
-                        }
-                    }
-                    .padding(.vertical, 4)
-                }
-                .onDelete { indexSet in
-                    for index in indexSet {
-                        let restaurant = viewModel.favoriteRestaurants[index]
-                        viewModel.dislikeRestaurant(restaurant)
-                    }
-                }
-            }
-        }
-        .navigationTitle("즐겨찾기 목록")
-    }
-}
-
-struct DownvotedListView: View {
-    @EnvironmentObject var viewModel: RecommendationViewModel
-    
-    var body: some View {
-        List {
-            if viewModel.downvotedRestaurants.isEmpty {
-                Text("비추천으로 표시된 음식점이 없습니다")
-                    .foregroundColor(.gray)
-                    .padding()
-            } else {
-                ForEach(viewModel.downvotedRestaurants) { restaurant in
-                    VStack(alignment: .leading) {
-                        Text(restaurant.name)
-                            .font(.headline)
-                        Text(restaurant.address)
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                        HStack {
-                            Text(restaurant.category)
-                                .font(.caption)
-                                .foregroundColor(.blue)
-                            Spacer()
-                            Text("★ \(String(format: "%.1f", restaurant.rating))")
-                                .font(.caption)
-                                .foregroundColor(.orange)
-                        }
-                    }
-                    .padding(.vertical, 4)
-                }
-                .onDelete { indexSet in
-                    for index in indexSet {
-                        viewModel.downvotedRestaurants.remove(at: index)
-                    }
-                }
-            }
-        }
-        .navigationTitle("비추천 목록")
-    }
-}
+// MARK: - No duplicate view definitions here
+// The FavoriteListView and DownvotedListView are already defined in RecommendationView.swift
 
 #Preview {
     ContentView()

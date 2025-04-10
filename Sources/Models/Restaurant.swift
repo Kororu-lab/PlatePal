@@ -10,10 +10,14 @@ struct Restaurant: Identifiable, Codable {
     let reviewCount: Int
     let priceRange: PriceRange
     let location: CLLocationCoordinate2D
-    let imageURL: URL?
+    let imageURL: String?
     let phoneNumber: String?
     let operatingHours: String?
     let description: String?
+    
+    // Additional properties for dual diner system
+    var distance: Double = 0
+    var categories: [String] { [category] }
     
     enum PriceRange: String, CaseIterable, Codable {
         case budget = "Budget"
@@ -31,10 +35,11 @@ struct Restaurant: Identifiable, Codable {
          reviewCount: Int, 
          priceRange: PriceRange, 
          location: CLLocationCoordinate2D, 
-         imageURL: URL? = nil, 
+         imageURL: String? = nil, 
          phoneNumber: String? = nil, 
          operatingHours: String? = nil, 
-         description: String? = nil) {
+         description: String? = nil,
+         distance: Double = 0) {
         self.id = id
         self.name = name
         self.address = address
@@ -47,6 +52,7 @@ struct Restaurant: Identifiable, Codable {
         self.phoneNumber = phoneNumber
         self.operatingHours = operatingHours
         self.description = description
+        self.distance = distance
     }
     
     // MARK: - Codable Implementation
@@ -54,7 +60,7 @@ struct Restaurant: Identifiable, Codable {
     enum CodingKeys: String, CodingKey {
         case id, name, address, category, rating, reviewCount, priceRange
         case latitude, longitude // For location
-        case imageURL, phoneNumber, operatingHours, description
+        case imageURL, phoneNumber, operatingHours, description, distance
     }
     
     init(from decoder: Decoder) throws {
@@ -68,15 +74,19 @@ struct Restaurant: Identifiable, Codable {
         reviewCount = try container.decode(Int.self, forKey: .reviewCount)
         priceRange = try container.decode(PriceRange.self, forKey: .priceRange)
         
-        // Decode location coordinates
+        // Decode coordinates
         let latitude = try container.decode(Double.self, forKey: .latitude)
         let longitude = try container.decode(Double.self, forKey: .longitude)
         location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         
-        imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
+        // Optional fields
+        imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL)
         phoneNumber = try container.decodeIfPresent(String.self, forKey: .phoneNumber)
         operatingHours = try container.decodeIfPresent(String.self, forKey: .operatingHours)
         description = try container.decodeIfPresent(String.self, forKey: .description)
+        
+        // Distance (optional with default)
+        distance = try container.decodeIfPresent(Double.self, forKey: .distance) ?? 0
     }
     
     func encode(to encoder: Encoder) throws {
@@ -90,14 +100,18 @@ struct Restaurant: Identifiable, Codable {
         try container.encode(reviewCount, forKey: .reviewCount)
         try container.encode(priceRange, forKey: .priceRange)
         
-        // Encode location coordinates separately
+        // Encode coordinates
         try container.encode(location.latitude, forKey: .latitude)
         try container.encode(location.longitude, forKey: .longitude)
         
+        // Optional fields
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try container.encodeIfPresent(phoneNumber, forKey: .phoneNumber)
         try container.encodeIfPresent(operatingHours, forKey: .operatingHours)
         try container.encodeIfPresent(description, forKey: .description)
+        
+        // Distance
+        try container.encode(distance, forKey: .distance)
     }
 }
 

@@ -13,14 +13,34 @@ import NMapsMap
 
 @main
 struct PlatePalApp: App {
+    // Create shared instances to be used throughout the app
+    let locationManager = LocationManager()
+    
+    @StateObject private var viewModel: RecommendationViewModel
+    
     init() {
-        // NaverMapService initialization is handled in its own init()
-        _ = NaverMapService.shared
+        // Initialize NMFAuthManager
+        _ = NMFAuthManager.shared()
+        
+        // Load debug mode from UserDefaults if exists
+        let isDebugMode = UserDefaults.standard.bool(forKey: "isDebugMode")
+        
+        // Initialize viewModel with loaded values
+        let vm = RecommendationViewModel(locationManager: locationManager)
+        vm.isDebugMode = isDebugMode
+        
+        // Create StateObject
+        _viewModel = StateObject(wrappedValue: vm)
     }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(viewModel)
+                .onDisappear {
+                    // Save debug mode when app closes
+                    UserDefaults.standard.set(viewModel.isDebugMode, forKey: "isDebugMode")
+                }
         }
     }
 } 

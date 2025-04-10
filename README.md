@@ -1,4 +1,4 @@
-# PlatePal - Your Evening Dining Companion
+# PlatePal - Restaurant Recommendation App
 
 [![Swift](https://img.shields.io/badge/Swift-5.5+-orange.svg)](https://swift.org)
 [![Xcode](https://img.shields.io/badge/Xcode-13.0+-blue.svg)](https://developer.apple.com/xcode/)
@@ -7,24 +7,62 @@
 [![License](https://img.shields.io/badge/license-CC%20BY--NC%204.0-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Toy%20Project-success.svg)](https://github.com/Kororu-lab/PlatePal)
 
-PlatePal is an iOS app that recommends restaurants based on your location, making dinner decisions effortless and enjoyable. This is a toy project developed for learning and experimenting with iOS development and location-based services.
+PlatePal is an iOS app that recommends restaurants based on your location and preferences.
 
 ## Key Features
 
-- Location-based restaurant recommendations
-- Personalized suggestions based on user preferences
-- Restaurant upvote/downvote system
-- Favorites and blacklist management
-- Price range filtering and detailed information
-- Korean language support
- 
-## Tech Stack
+### Dual Diner System
+- Recommends optimal restaurants for two people with different preferences
+- Allows selection between recommended options through a 'select' feature
+- Includes auto-selection feature to automatically choose the restaurant with the highest score
 
+### Personalized Recommendations
+- Customized recommendation system based on your favorites, price range, distance, and category preferences
+- The app learns your preferences over time for more accurate recommendations
+
+### Debug Mode
+- Visualize and understand how the recommendation system works
+- Check the score of each restaurant and its components (distance, price, category, preference, and randomness)
+
+### Intuitive Interface
+- Map-based interface makes it easy to explore nearby restaurants
+- View detailed information in the list view
+
+## Settings Options
+
+### Recommendation Settings
+- Price range (Budget, Medium, Premium)
+- Maximum distance (500m-5000m)
+- Randomness adjustment (0-100%)
+- Enable Dual Diner system
+- Enable automatic selection
+
+### Filter Settings
+- Show favorites
+- Show downvoted restaurants
+- Category preferences
+
+## Development Information
+
+### Requirements
+- iOS 14.0 or later
+- Xcode 13.0 or later
+- CocoaPods
+
+### Technology Stack
 - SwiftUI
-- Core Location
-- Naver Maps API
-- UserDefaults for preference storage
 - Combine
+- CoreLocation
+- Naver Maps SDK
+
+### Installation
+1. Clone the repository: `git clone https://github.com/yourusername/PlatePal.git`
+2. Install dependencies: `pod install`
+3. Open PlatePal.xcworkspace
+4. Build and run
+
+## License
+MIT License
 
 ## App Screens
 

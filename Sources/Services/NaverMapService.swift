@@ -38,7 +38,7 @@ class NaverMapService {
         // Force the SDK to perform an operation that will trigger initialization
         DispatchQueue.main.async {
             // Add authorization check
-            let authManager = NMFAuthManager.shared()
+            _ = NMFAuthManager.shared()
             print("Starting Naver Maps SDK initialization")
             
             // Trigger a dummy operation to ensure the SDK is fully initialized
@@ -84,10 +84,6 @@ class NaverMapService {
             URLQueryItem(name: "isPlaceRecommendation", value: "true"),
             URLQueryItem(name: "lang", value: "ko")
         ]
-        
-        guard let url = components?.url else {
-            throw NetworkError.other(NSError(domain: "URL creation error", code: -1))
-        }
         
         // Mock data for testing since we won't actually call the API
         // In a real app, you would make the network request here
