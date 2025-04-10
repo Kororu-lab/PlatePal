@@ -10,12 +10,29 @@ targets:
     platform: iOS
     sources:
       - path: Sources
+        excludes:
+          - "**/.DS_Store"
+        includes:
+          - "LaunchScreen.storyboard"
+          - "Views/**/*.swift"
+          - "Services/**/*.swift"
+          - "Models/**/*.swift"
+          - "ViewModels/**/*.swift"
+          - "PlatePalApp.swift"
+      - path: Sources/PlatePal
+        excludes:
+          - "**/.DS_Store"
+        includes:
+          - "**/*.swift"
+          - "**/*.storyboard"
+          - "**/*.plist"
+          - "**/*.xcassets"
     settings:
       base:
-        INFOPLIST_FILE: Sources/Info.plist
+        INFOPLIST_FILE: Sources/PlatePal/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.platepal.app
     info:
-      path: Sources/Info.plist
+      path: Sources/PlatePal/Info.plist
       properties:
         CFBundleName: PlatePal
         CFBundleDisplayName: PlatePal
