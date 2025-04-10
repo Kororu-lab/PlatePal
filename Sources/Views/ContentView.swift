@@ -19,17 +19,17 @@ struct ContentView: View {
                 locationManager: locationManager
             )
             .tabItem {
-                Label("Map", systemImage: "map")
+                Label("지도", systemImage: "map")
             }
             
             RestaurantListView()
                 .tabItem {
-                    Label("List", systemImage: "list.bullet")
+                    Label("목록", systemImage: "list.bullet")
                 }
             
             SettingsView()
                 .tabItem {
-                    Label("Settings", systemImage: "gear")
+                    Label("설정", systemImage: "gear")
                 }
         }
         .background(Color.white)

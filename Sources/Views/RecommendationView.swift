@@ -34,7 +34,7 @@ struct RecommendationView: View {
                     Button(action: {
                         viewModel.recommendRestaurant()
                     }) {
-                        Text("Recommend Restaurant")
+                        Text("식당 추천")
                             .font(.headline)
                             .foregroundColor(.white)
                             .padding()
@@ -44,7 +44,7 @@ struct RecommendationView: View {
                     .padding(.bottom)
                 }
             }
-            .navigationTitle("Restaurant Recommendations")
+            .navigationTitle("맛집 추천")
             .background(Color.white) // Add background to whole view
         }
     }
@@ -82,10 +82,10 @@ struct MapView: UIViewRepresentable {
         mapView.showZoomControls = false  // Disable initially
         mapView.showCompass = false       // Disable initially
         mapView.showScaleBar = false      // Disable initially
-        mapView.showLocationButton = false // Keep disabled
+        mapView.showLocationButton = true // Re-enable location button
         
         // Configure map with minimal settings first
-        mapView.mapView.positionMode = .disabled
+        mapView.mapView.positionMode = .normal // Allow positioning
         mapView.mapView.zoomLevel = 15
         mapView.mapView.mapType = .basic
         mapView.mapView.backgroundColor = UIColor.white
