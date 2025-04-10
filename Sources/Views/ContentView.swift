@@ -1,6 +1,14 @@
 import SwiftUI
 import NMapsMap
 import CoreLocation
+import UIKit
+
+// MARK: - Price Range (Fallback if import doesn't work)
+enum PriceRangeFallback: String, CaseIterable {
+    case budget = "Budget"
+    case medium = "Medium"
+    case premium = "Premium"
+}
 
 struct ContentView: View {
     @StateObject private var locationManager = LocationManager()
@@ -22,7 +30,7 @@ struct ContentView: View {
                 Label("지도", systemImage: "map")
             }
             
-            RestaurantListView()
+            RestaurantListView(restaurants: recommendationViewModel.restaurants)
                 .tabItem {
                     Label("목록", systemImage: "list.bullet")
                 }
@@ -33,6 +41,7 @@ struct ContentView: View {
                 }
         }
         .background(Color.white)
+        .environmentObject(recommendationViewModel)
         .onAppear {
             let tabBarAppearance = UITabBarAppearance()
             tabBarAppearance.configureWithOpaqueBackground()
@@ -50,33 +59,158 @@ struct ContentView: View {
 
 // MARK: - Supporting Views
 struct RestaurantListView: View {
+    var restaurants: [Restaurant]
+    @EnvironmentObject var viewModel: RecommendationViewModel
+    @State private var selectedRestaurant: Restaurant?
+    @State private var showingDetails = false
+    
     var body: some View {
         NavigationView {
             List {
-                Text("음식점 목록")
+                if viewModel.restaurants.isEmpty {
+                    Text("식당 정보가 없습니다")
+                } else {
+                    ForEach(viewModel.restaurants) { restaurant in
+                        Button(action: {
+                            selectedRestaurant = restaurant
+                            showingDetails = true
+                        }) {
+                            VStack(alignment: .leading) {
+                                Text(restaurant.name)
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                                Text(restaurant.address)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                HStack {
+                                    Text(restaurant.category)
+                                        .font(.caption)
+                                        .foregroundColor(.blue)
+                                    Spacer()
+                                    Text("★ \(String(format: "%.1f", restaurant.rating))")
+                                        .font(.caption)
+                                        .foregroundColor(.orange)
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                }
             }
             .navigationTitle("식당 목록")
+            .sheet(isPresented: $showingDetails) {
+                if let restaurant = selectedRestaurant {
+                    RestaurantDetailView(restaurant: restaurant)
+                }
+            }
         }
     }
 }
 
-struct SettingsView: View {
+struct RestaurantDetailView: View {
+    let restaurant: Restaurant
+    
     var body: some View {
-        NavigationView {
-            List {
-                Section(header: Text("계정")) {
-                    Text("프로필 정보")
-                    Text("로그아웃")
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(restaurant.name)
+                    .font(.largeTitle)
+                    .bold()
+                
+                Text(restaurant.address)
+                    .font(.subheadline)
+                
+                Divider()
+                
+                HStack {
+                    Label("\(restaurant.category)", systemImage: "tag")
+                    Spacer()
+                    Label("★ \(String(format: "%.1f", restaurant.rating)) (\(restaurant.reviewCount))", systemImage: "star.fill")
+                        .foregroundColor(.orange)
                 }
                 
-                Section(header: Text("앱 설정")) {
-                    Text("알림 설정")
-                    Text("언어 설정")
+                if let description = restaurant.description {
+                    Divider()
+                    Text("설명")
+                        .font(.headline)
+                    Text(description)
+                        .font(.body)
+                }
+                
+                if let operatingHours = restaurant.operatingHours {
+                    Divider()
+                    Text("영업시간")
+                        .font(.headline)
+                    Text(operatingHours)
+                        .font(.body)
+                }
+                
+                if let phoneNumber = restaurant.phoneNumber {
+                    Divider()
+                    Text("연락처")
+                        .font(.headline)
+                    Button(action: {
+                        let tel = "tel://\(phoneNumber.replacingOccurrences(of: "-", with: ""))"
+                        if let url = URL(string: tel) {
+                            UIApplication.shared.open(url)
+                        }
+                    }) {
+                        Text(phoneNumber)
+                            .foregroundColor(.blue)
+                    }
+                }
+                
+                Spacer()
+            }
+            .padding()
+        }
+    }
+}
+
+// MARK: - Settings View
+struct SettingsView: View {
+    @AppStorage("priceRange") private var priceRange: PriceRangeFallback = .medium
+    @AppStorage("maxDistance") private var maxDistance: Double = 2000
+    @AppStorage("showFavorites") private var showFavorites = true
+    @AppStorage("showDownvoted") private var showDownvoted = false
+    
+    var body: some View {
+        NavigationView {
+            Form {
+                Section(header: Text("환경설정")) {
+                    Picker("가격대", selection: $priceRange) {
+                        ForEach(PriceRangeFallback.allCases, id: \.self) { range in
+                            Text(range.rawValue == "Budget" ? "저렴함" :
+                                (range.rawValue == "Medium" ? "보통" : "고급")).tag(range)
+                        }
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Text("최대 거리: \(Int(maxDistance))m")
+                        Slider(value: $maxDistance, in: 500...5000, step: 100)
+                    }
+                    
+                    Toggle("즐겨찾기 표시", isOn: $showFavorites)
+                    Toggle("비추천 표시", isOn: $showDownvoted)
+                }
+                
+                Section(header: Text("내 목록")) {
+                    NavigationLink("즐겨찾는 음식점") {
+                        Text("즐겨찾기 목록")
+                    }
+                    
+                    NavigationLink("비추천 장소") {
+                        Text("비추천 목록")
+                    }
                 }
                 
                 Section(header: Text("정보")) {
-                    Text("버전 1.0.0")
-                    Text("개인정보 처리방침")
+                    HStack {
+                        Text("버전")
+                        Spacer()
+                        Text("1.0.0")
+                            .foregroundColor(.gray)
+                    }
                 }
             }
             .navigationTitle("설정")
