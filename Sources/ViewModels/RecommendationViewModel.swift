@@ -8,6 +8,8 @@ class RecommendationViewModel: ObservableObject {
     @Published var currentRecommendation: Restaurant?
     @Published var isLoading = false
     @Published var error: Error?
+    @Published var favoriteRestaurants: [Restaurant] = []
+    @Published var downvotedRestaurants: [Restaurant] = []
     
     private let locationManager: LocationManager
     private var cancellables = Set<AnyCancellable>()
@@ -27,6 +29,9 @@ class RecommendationViewModel: ObservableObject {
                 self?.fetchRestaurants()
             }
             .store(in: &cancellables)
+            
+        // Load saved favorites and downvoted restaurants
+        loadSavedPreferences()
     }
     
     private func loadSampleData() {
@@ -81,6 +86,28 @@ class RecommendationViewModel: ObservableObject {
         // Set initial recommendation if none exists
         if currentRecommendation == nil && !restaurants.isEmpty {
             recommendRestaurant()
+        }
+    }
+    
+    private func loadSavedPreferences() {
+        if let favoritesData = UserDefaults.standard.data(forKey: "favoriteRestaurants"),
+           let favorites = try? JSONDecoder().decode([Restaurant].self, from: favoritesData) {
+            self.favoriteRestaurants = favorites
+        }
+        
+        if let downvotedData = UserDefaults.standard.data(forKey: "downvotedRestaurants"),
+           let downvoted = try? JSONDecoder().decode([Restaurant].self, from: downvotedData) {
+            self.downvotedRestaurants = downvoted
+        }
+    }
+    
+    private func savePreferences() {
+        if let favoritesData = try? JSONEncoder().encode(favoriteRestaurants) {
+            UserDefaults.standard.set(favoritesData, forKey: "favoriteRestaurants")
+        }
+        
+        if let downvotedData = try? JSONEncoder().encode(downvotedRestaurants) {
+            UserDefaults.standard.set(downvotedData, forKey: "downvotedRestaurants")
         }
     }
     
@@ -196,13 +223,41 @@ class RecommendationViewModel: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: workItem)
     }
     
-    func likeRestaurant() {
-        // TODO: Implement preference saving
-        print("좋아요: \(restaurants.first?.name ?? "")")
+    func likeRestaurant(_ restaurant: Restaurant? = nil) {
+        guard let restaurant = restaurant ?? currentRecommendation else { return }
+        
+        // Remove from downvoted if it exists
+        downvotedRestaurants.removeAll { $0.id == restaurant.id }
+        
+        // Add to favorites if not already there
+        if !favoriteRestaurants.contains(where: { $0.id == restaurant.id }) {
+            favoriteRestaurants.append(restaurant)
+            savePreferences()
+        }
+        
+        print("즐겨찾기 추가: \(restaurant.name)")
     }
     
-    func dislikeRestaurant() {
-        // TODO: Implement preference saving
-        print("싫어요: \(restaurants.first?.name ?? "")")
+    func dislikeRestaurant(_ restaurant: Restaurant? = nil) {
+        guard let restaurant = restaurant ?? currentRecommendation else { return }
+        
+        // Remove from favorites if it exists
+        favoriteRestaurants.removeAll { $0.id == restaurant.id }
+        
+        // Add to downvoted if not already there
+        if !downvotedRestaurants.contains(where: { $0.id == restaurant.id }) {
+            downvotedRestaurants.append(restaurant)
+            savePreferences()
+        }
+        
+        print("비추천 추가: \(restaurant.name)")
+    }
+    
+    func isRestaurantFavorite(_ restaurant: Restaurant) -> Bool {
+        return favoriteRestaurants.contains(where: { $0.id == restaurant.id })
+    }
+    
+    func isRestaurantDownvoted(_ restaurant: Restaurant) -> Bool {
+        return downvotedRestaurants.contains(where: { $0.id == restaurant.id })
     }
 } 

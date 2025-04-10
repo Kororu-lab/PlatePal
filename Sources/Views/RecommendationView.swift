@@ -26,7 +26,7 @@ struct RecommendationView: View {
                     Spacer()
                     
                     if let recommendation = viewModel.currentRecommendation {
-                        RecommendationCard(restaurant: recommendation)
+                        RecommendationCard(restaurant: recommendation, viewModel: viewModel)
                             .padding()
                             .transition(.move(edge: .bottom))
                     }
@@ -255,6 +255,7 @@ struct MapView: UIViewRepresentable {
 
 struct RecommendationCard: View {
     let restaurant: Restaurant
+    @ObservedObject var viewModel: RecommendationViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -284,11 +285,37 @@ struct RecommendationCard: View {
                 }
             }
             
-            Text(restaurant.priceRange.rawValue)
+            Text(restaurant.priceRange.rawValue == "Budget" ? "저렴함" :
+                (restaurant.priceRange.rawValue == "Medium" ? "보통" : "고급"))
                 .font(.caption)
                 .padding(4)
                 .background(Color.green.opacity(0.2))
                 .cornerRadius(4)
+            
+            HStack {
+                Spacer()
+                
+                Button(action: {
+                    viewModel.dislikeRestaurant(restaurant)
+                }) {
+                    Image(systemName: viewModel.isRestaurantDownvoted(restaurant) ? "hand.thumbsdown.fill" : "hand.thumbsdown")
+                        .foregroundColor(.red)
+                        .font(.title2)
+                }
+                .padding(.horizontal)
+                
+                Button(action: {
+                    viewModel.likeRestaurant(restaurant)
+                }) {
+                    Image(systemName: viewModel.isRestaurantFavorite(restaurant) ? "heart.fill" : "heart")
+                        .foregroundColor(.red)
+                        .font(.title2)
+                }
+                .padding(.horizontal)
+                
+                Spacer()
+            }
+            .padding(.top, 8)
         }
         .padding()
         .background(Color.white)
@@ -299,8 +326,9 @@ struct RecommendationCard: View {
 
 #Preview {
     let locationManager = LocationManager()
+    let viewModel = RecommendationViewModel(locationManager: locationManager)
     return RecommendationView(
-        viewModel: RecommendationViewModel(locationManager: locationManager),
+        viewModel: viewModel,
         locationManager: locationManager
     )
 } 

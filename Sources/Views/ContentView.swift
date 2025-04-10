@@ -196,11 +196,11 @@ struct SettingsView: View {
                 
                 Section(header: Text("내 목록")) {
                     NavigationLink("즐겨찾는 음식점") {
-                        Text("즐겨찾기 목록")
+                        FavoriteListView()
                     }
                     
                     NavigationLink("비추천 장소") {
-                        Text("비추천 목록")
+                        DownvotedListView()
                     }
                 }
                 
@@ -215,6 +215,88 @@ struct SettingsView: View {
             }
             .navigationTitle("설정")
         }
+    }
+}
+
+// MARK: - Favorite and Downvoted Lists
+struct FavoriteListView: View {
+    @EnvironmentObject var viewModel: RecommendationViewModel
+    
+    var body: some View {
+        List {
+            if viewModel.favoriteRestaurants.isEmpty {
+                Text("즐겨찾기에 추가된 음식점이 없습니다")
+                    .foregroundColor(.gray)
+                    .padding()
+            } else {
+                ForEach(viewModel.favoriteRestaurants) { restaurant in
+                    VStack(alignment: .leading) {
+                        Text(restaurant.name)
+                            .font(.headline)
+                        Text(restaurant.address)
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                        HStack {
+                            Text(restaurant.category)
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                            Spacer()
+                            Text("★ \(String(format: "%.1f", restaurant.rating))")
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+                .onDelete { indexSet in
+                    for index in indexSet {
+                        let restaurant = viewModel.favoriteRestaurants[index]
+                        viewModel.dislikeRestaurant(restaurant)
+                    }
+                }
+            }
+        }
+        .navigationTitle("즐겨찾기 목록")
+    }
+}
+
+struct DownvotedListView: View {
+    @EnvironmentObject var viewModel: RecommendationViewModel
+    
+    var body: some View {
+        List {
+            if viewModel.downvotedRestaurants.isEmpty {
+                Text("비추천으로 표시된 음식점이 없습니다")
+                    .foregroundColor(.gray)
+                    .padding()
+            } else {
+                ForEach(viewModel.downvotedRestaurants) { restaurant in
+                    VStack(alignment: .leading) {
+                        Text(restaurant.name)
+                            .font(.headline)
+                        Text(restaurant.address)
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                        HStack {
+                            Text(restaurant.category)
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                            Spacer()
+                            Text("★ \(String(format: "%.1f", restaurant.rating))")
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+                .onDelete { indexSet in
+                    for index in indexSet {
+                        viewModel.downvotedRestaurants.remove(at: index)
+                    }
+                }
+            }
+        }
+        .navigationTitle("비추천 목록")
     }
 }
 
