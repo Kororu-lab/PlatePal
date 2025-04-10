@@ -7,7 +7,16 @@ DerivedData/
 .swiftpm/config/registries.json
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
+
+# Secret files
 Sources/Config.swift
+**/*/Config.swift
+**/*Config*.swift
+**/*Secret*.swift
+**/*Credentials*.swift
+**/*Keys*.swift
+**/*/Keys.swift
+**/*ApiKey*.swift
 build/
 
 # Xcode
@@ -54,3 +63,8 @@ Dependencies/
 # Playgrounds
 timeline.xctimeline
 playground.xcworkspace
+
+# Local configuration
+.env
+.env.local
+*.local.swift

@@ -51,6 +51,20 @@ PlatePal is an iOS app that recommends restaurants based on your location, makin
 1. Clone the repository
 2. Open `PlatePal.xcodeproj` in Xcode
 3. Configure the required API keys in `Config.swift`
+   - Create a new file named `Config.swift` in the Sources directory
+   - Add the following template:
+   ```swift
+   import Foundation
+   
+   enum Config {
+       enum NaverMap {
+           static let clientId = "YOUR_CLIENT_ID_HERE"
+           static let clientSecret = "YOUR_CLIENT_SECRET_HERE"
+       }
+   }
+   ```
+   - Replace with your actual Naver Maps API credentials
+   - This file is in `.gitignore` and will not be committed to Git
 4. Build and run
 
 ## License
