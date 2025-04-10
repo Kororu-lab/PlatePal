@@ -3,6 +3,7 @@
 [![Swift](https://img.shields.io/badge/Swift-5.5+-orange.svg)](https://swift.org)
 [![Xcode](https://img.shields.io/badge/Xcode-13.0+-blue.svg)](https://developer.apple.com/xcode/)
 [![iOS](https://img.shields.io/badge/iOS-15.0+-lightgrey.svg)](https://www.apple.com/ios/)
+[![Version](https://img.shields.io/badge/Version-0.1.0-brightgreen.svg)](https://github.com/Kororu-lab/PlatePal)
 [![License](https://img.shields.io/badge/license-CC%20BY--NC%204.0-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Toy%20Project-success.svg)](https://github.com/Kororu-lab/PlatePal)
 
@@ -12,19 +13,32 @@ PlatePal is an iOS app that recommends restaurants based on your location, makin
 
 - Location-based restaurant recommendations
 - Personalized suggestions based on user preferences
-- Quick recommendations with shake gesture
-- History management
-- Price range and detailed information
-- Review system
+- Restaurant upvote/downvote system
+- Favorites and blacklist management
+- Price range filtering and detailed information
+- Korean language support
  
 ## Tech Stack
 
 - SwiftUI
 - Core Location
-- Core Motion
 - Naver Maps API
-- Core Data
+- UserDefaults for preference storage
 - Combine
+
+## App Screens
+
+- **지도 (Map)**: Interactive map showing restaurant locations with recommendation card
+- **목록 (List)**: Comprehensive list of nearby restaurants
+- **설정 (Settings)**: User preferences, favorites, and downvoted restaurants
+
+## Recent Updates
+
+- Added upvote/downvote functionality for restaurants
+- Implemented favorites and downvote lists
+- Added Korean language support throughout the app
+- Improved recommendation algorithm
+- Enhanced UI with consistent button styling
 
 ## Requirements
 
@@ -36,7 +50,7 @@ PlatePal is an iOS app that recommends restaurants based on your location, makin
 
 1. Clone the repository
 2. Open `PlatePal.xcodeproj` in Xcode
-3. Configure the required API keys
+3. Configure the required API keys in `Config.swift`
 4. Build and run
 
 ## License

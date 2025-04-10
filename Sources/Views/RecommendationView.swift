@@ -29,19 +29,24 @@ struct RecommendationView: View {
                         RecommendationCard(restaurant: recommendation, viewModel: viewModel)
                             .padding()
                             .transition(.move(edge: .bottom))
-                    }
-                    
-                    Button(action: {
-                        viewModel.recommendRestaurant()
-                    }) {
-                        Text("식당 추천")
-                            .font(.headline)
+                    } else {
+                        // Show a button to get initial recommendation if none exists
+                        Button(action: {
+                            viewModel.recommendRestaurant()
+                        }) {
+                            VStack {
+                                Image(systemName: "arrow.clockwise.circle.fill")
+                                    .font(.system(size: 40))
+                                Text("식당 추천 받기")
+                                    .font(.headline)
+                            }
                             .foregroundColor(.white)
                             .padding()
                             .background(Color.blue)
                             .cornerRadius(10)
+                        }
+                        .padding(.bottom)
                     }
-                    .padding(.bottom)
                 }
             }
             .navigationTitle("맛집 추천")
@@ -297,8 +302,18 @@ struct RecommendationCard: View {
                 
                 Button(action: {
                     viewModel.dislikeRestaurant(restaurant)
+                    viewModel.recommendRestaurant() // Also get a new recommendation when downvoting
                 }) {
                     Image(systemName: viewModel.isRestaurantDownvoted(restaurant) ? "hand.thumbsdown.fill" : "hand.thumbsdown")
+                        .foregroundColor(.red)
+                        .font(.title2)
+                }
+                .padding(.horizontal)
+                
+                Button(action: {
+                    viewModel.recommendRestaurant()
+                }) {
+                    Image(systemName: "arrow.clockwise.circle.fill")
                         .foregroundColor(.red)
                         .font(.title2)
                 }
