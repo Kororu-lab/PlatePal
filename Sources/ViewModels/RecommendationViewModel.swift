@@ -28,7 +28,25 @@ class RecommendationViewModel: ObservableObject {
     @Published var favoriteRestaurants: [Restaurant] = []
     @Published var downvotedRestaurants: [Restaurant] = []
     @Published var randomnessFactor: Double = 0.5
-    @Published var isDebugMode: Bool = false
+    @Published var isDebugMode: Bool = UserDefaults.standard.bool(forKey: "isDebugMode") {
+        didSet {
+            UserDefaults.standard.set(isDebugMode, forKey: "isDebugMode")
+            print("ViewModel debug mode set to: \(isDebugMode)")
+            // Ensure UI updates
+            objectWillChange.send()
+            
+            // Force update of all diner cards with debug information
+            DispatchQueue.main.async {
+                // Notify all interested views
+                NotificationCenter.default.post(name: .debugModeChanged, object: nil)
+                
+                // Send additional notification to refresh UI components
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self.objectWillChange.send()
+                }
+            }
+        }
+    }
     @Published var selectedRestaurant: Restaurant?
     @Published var selectionHistory: [SelectionRecord] = []
     
@@ -42,6 +60,19 @@ class RecommendationViewModel: ObservableObject {
     
     init(locationManager: LocationManager) {
         self.locationManager = locationManager
+        
+        // Load saved preferences
+        self.randomnessFactor = UserDefaults.standard.double(forKey: "randomnessFactor")
+        if self.randomnessFactor == 0 {
+            // Set default value if not previously saved
+            self.randomnessFactor = 0.5
+            UserDefaults.standard.set(self.randomnessFactor, forKey: "randomnessFactor")
+        }
+        
+        // Load debug mode state
+        self.isDebugMode = UserDefaults.standard.bool(forKey: "isDebugMode")
+        
+        print("ViewModel initialized with randomness factor: \(randomnessFactor), debug mode: \(isDebugMode)")
         
         // Load sample data immediately
         loadSampleData()
@@ -929,6 +960,9 @@ class RecommendationViewModel: ObservableObject {
     
     func setRandomnessFactor(_ factor: Double) {
         randomnessFactor = max(0, min(1, factor))
+        UserDefaults.standard.set(randomnessFactor, forKey: "randomnessFactor")
+        print("Randomness factor set to: \(randomnessFactor)")
+        objectWillChange.send()
     }
     
     // MARK: - Map Control Functions
@@ -1139,4 +1173,5 @@ extension Notification.Name {
     static let refreshDownvotedStatus = Notification.Name("refreshDownvotedStatus")
     static let refreshFavoritedStatus = Notification.Name("refreshFavoritedStatus")
     static let refreshSelectionStatus = Notification.Name("refreshSelectionStatus")
+    static let debugModeChanged = Notification.Name("debugModeChanged")
 } 

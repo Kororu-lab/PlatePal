@@ -57,9 +57,29 @@ struct SettingsView: View {
                             .foregroundColor(.gray)
                     }
                     
-                    Slider(value: $maxDistance, in: 500...5000, step: 100)
+                    Slider(value: $maxDistance, in: 300...3000, step: 100)
                         .tint(Color("AccentColor"))
                 }
+                
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text("랜덤 레벨")
+                        Spacer()
+                        Text("\(Int(viewModel.randomnessFactor * 100))%")
+                            .foregroundColor(.gray)
+                    }
+                    
+                    Slider(
+                        value: Binding(
+                            get: { viewModel.randomnessFactor },
+                            set: { viewModel.setRandomnessFactor($0) }
+                        ),
+                        in: 0...1,
+                        step: 0.05
+                    )
+                    .tint(Color("AccentColor"))
+                }
+                .padding(.vertical, 8)
                 
                 NavigationLink(destination: CategoryPreferencesView()) {
                     Text("선호 카테고리 설정")
@@ -129,6 +149,7 @@ struct SettingsView: View {
             // Convert viewModel data into format needed by DebugView
             let debugData = viewModel.dinerRecommendations.map { restaurant in
                 RestaurantScore(
+                    id: restaurant.id,
                     name: restaurant.name,
                     category: restaurant.category,
                     distance: restaurant.distance,
@@ -138,7 +159,7 @@ struct SettingsView: View {
                         price: viewModel.getPriceScore(restaurant),
                         category: viewModel.getCategorySimilarity(restaurant),
                         favorite: viewModel.getFavoriteScore(restaurant),
-                        random: viewModel.getRandomnessScore(restaurant)
+                        random: viewModel.getRandomnessScore()
                     )
                 )
             }

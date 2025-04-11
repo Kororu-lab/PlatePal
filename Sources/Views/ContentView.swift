@@ -207,9 +207,29 @@ struct AppSettingsView: View {
                     
                     VStack(alignment: .leading) {
                         Text("최대 거리: \(Int(maxDistance))m")
-                        Slider(value: $maxDistance, in: 500...5000, step: 100)
+                        Slider(value: $maxDistance, in: 300...3000, step: 100)
                             .tint(Color.blue)
                     }
+                    
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text("랜덤 레벨")
+                            Spacer()
+                            Text("\(Int(viewModel.randomnessFactor * 100))%")
+                                .foregroundColor(.gray)
+                        }
+                        
+                        Slider(
+                            value: Binding(
+                                get: { viewModel.randomnessFactor },
+                                set: { viewModel.setRandomnessFactor($0) }
+                            ),
+                            in: 0...1,
+                            step: 0.05
+                        )
+                        .tint(Color.blue)
+                    }
+                    .padding(.vertical, 6)
                     
                     Toggle("즐겨찾기 표시", isOn: $showFavorites)
                         .tint(Color.blue)

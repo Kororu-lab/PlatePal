@@ -142,7 +142,7 @@ struct RecommendationView: View {
                         
                         VStack(alignment: .leading) {
                             HStack {
-                                Text("기본 랜덤성")
+                                Text("랜덤 레벨")
                                 Spacer()
                                 Text("\(Int(viewModel.randomnessFactor * 100))%")
                                     .foregroundColor(.gray)
@@ -154,18 +154,44 @@ struct RecommendationView: View {
                                     set: { viewModel.setRandomnessFactor($0) }
                                 ),
                                 in: 0...1,
-                                step: 0.01
+                                step: 0.05
                             )
                             .tint(Color.blue)
                         }
+                        .padding(.vertical, 8)
                         
                         Toggle("디버그 모드", isOn: $localDebugMode)
+                            .tint(Color.blue)
                             .onChange(of: localDebugMode) { newValue in
                                 viewModel.isDebugMode = newValue
-                                viewModel.objectWillChange.send()
+                                print("Debug mode toggled to: \(newValue)")
+                                
+                                // Force a UI update with several notifications
+                                DispatchQueue.main.async {
+                                    // Notify all interested views
+                                    NotificationCenter.default.post(name: .debugModeChanged, object: nil)
+                                    viewModel.objectWillChange.send()
+                                    
+                                    // Send additional notifications after a delay for components that might miss the first one
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                        NotificationCenter.default.post(name: .debugModeChanged, object: nil)
+                                        viewModel.objectWillChange.send()
+                                    }
+                                    
+                                    // Final refresh
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        viewModel.objectWillChange.send()
+                                    }
+                                }
                             }
                             .onAppear {
                                 localDebugMode = viewModel.isDebugMode
+                                print("Settings view appeared, debug mode: \(localDebugMode)")
+                                
+                                // Ensure UI is refreshed when view appears
+                                DispatchQueue.main.async {
+                                    NotificationCenter.default.post(name: .debugModeChanged, object: nil)
+                                }
                             }
                     }
                     
@@ -174,8 +200,16 @@ struct RecommendationView: View {
                             FavoriteListView(viewModel: viewModel)
                         }
                         
-                        NavigationLink("비추천 장소") {
+                        NavigationLink("싫어하는 음식점") {
                             DownvotedListView(viewModel: viewModel)
+                        }
+                        
+                        // Add selection history directly under "내 목록"
+                        if viewModel.selectionHistory.count > 0 {
+                            NavigationLink("선택 기록") {
+                                SelectionHistoryView(viewModel: viewModel)
+                            }
+                            .foregroundColor(localDebugMode ? .blue : .primary)
                         }
                     }
                     
@@ -187,15 +221,21 @@ struct RecommendationView: View {
                             
                             Text("Selection History Count: \(viewModel.selectionHistory.count)")
                                 .foregroundColor(.blue)
-                                
-                            NavigationLink("선택 기록") {
-                                SelectionHistoryView(viewModel: viewModel)
-                            }
                             
-                            Button("Force UI Refresh") {
+                            Button("강제 UI 새로고침") {
+                                // Multiple notifications for thorough refresh
+                                NotificationCenter.default.post(name: .debugModeChanged, object: nil)
                                 viewModel.objectWillChange.send()
+                                
+                                // Send a refresh notification for debug visuals as well
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    NotificationCenter.default.post(name: .refreshSelectionStatus, object: nil)
+                                    NotificationCenter.default.post(name: .refreshDownvotedStatus, object: nil)
+                                    NotificationCenter.default.post(name: .refreshFavoritedStatus, object: nil)
+                                }
                             }
-                            .foregroundColor(.orange)
+                            .foregroundColor(.red)
+                            .font(.headline)
                         }
                     }
                 }
@@ -218,22 +258,74 @@ struct RecommendationView: View {
         
         var body: some View {
             List {
-                ForEach(viewModel.selectionHistory.indices, id: \.self) { index in
+                ForEach(viewModel.selectionHistory.indices.reversed(), id: \.self) { index in
                     let record = viewModel.selectionHistory[index]
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Selected: \(record.selectedRestaurant.name)")
+                    VStack(alignment: .leading, spacing: 10) {
+                        // "A over B" format as requested
+                        Text("\(record.selectedRestaurant.name) \(Image(systemName: "arrow.up")) ")
                             .font(.headline)
-                        Text("Over: \(record.rejectedRestaurant.name)")
+                            .fontWeight(.bold)
+                            .foregroundColor(.green) +
+                        Text("선택됨")
                             .font(.subheadline)
-                        Text("Date: \(record.date, formatter: dateFormatter)")
+                        
+                        Text("\(record.rejectedRestaurant.name) \(Image(systemName: "arrow.down")) ")
+                            .font(.headline)
+                            .foregroundColor(.red) +
+                        Text("거부됨")
+                            .font(.subheadline)
+                        
+                        // Add more context about the selections
+                        HStack(spacing: 20) {
+                            VStack(alignment: .leading) {
+                                Text("선택")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                Text(record.selectedRestaurant.category)
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.green.opacity(0.8))
+                            }
+                            
+                            VStack(alignment: .leading) {
+                                Text("거부")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                Text(record.rejectedRestaurant.category)
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.red.opacity(0.8))
+                            }
+                        }
+                        
+                        // Time of selection
+                        Text("선택 시간: \(record.date, formatter: dateFormatter)")
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
                     .padding(.vertical, 8)
+                    .background(Color.white)
+                    .cornerRadius(8)
+                    .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+                    .padding(.vertical, 4)
                 }
             }
+            .listStyle(InsetGroupedListStyle())
             .navigationTitle("선택 기록")
             .navigationBarTitleDisplayMode(.inline)
+            .overlay(
+                Group {
+                    if viewModel.selectionHistory.isEmpty {
+                        VStack {
+                            Image(systemName: "doc.text.magnifyingglass")
+                                .font(.largeTitle)
+                                .foregroundColor(.gray)
+                            Text("선택 기록이 없습니다.")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
+            )
         }
         
         private var dateFormatter: DateFormatter {
@@ -251,7 +343,7 @@ struct RecommendationView: View {
             
             VStack(spacing: 12) {
                 // Diners area
-                HStack(spacing: 8) {
+                HStack(spacing: 4) {
                     // First diner
                     if !viewModel.dinerRecommendations.isEmpty {
                         DinerCard(
@@ -272,7 +364,6 @@ struct RecommendationView: View {
                                     viewModel.downvoteRestaurant(viewModel.dinerRecommendations[0])
                                 }
                             },
-                            isDebugMode: viewModel.isDebugMode,
                             score: viewModel.dinerRecommendations.isEmpty ? nil : viewModel.getRestaurantScore(viewModel.dinerRecommendations[0]),
                             categorySimilarity: viewModel.dinerRecommendations.isEmpty ? nil : viewModel.getCategorySimilarity(viewModel.dinerRecommendations[0])
                         )
@@ -301,7 +392,6 @@ struct RecommendationView: View {
                                     viewModel.downvoteRestaurant(viewModel.dinerRecommendations[1])
                                 }
                             },
-                            isDebugMode: viewModel.isDebugMode,
                             score: viewModel.dinerRecommendations.count > 1 ? viewModel.getRestaurantScore(viewModel.dinerRecommendations[1]) : nil,
                             categorySimilarity: viewModel.dinerRecommendations.count > 1 ? viewModel.getCategorySimilarity(viewModel.dinerRecommendations[1]) : nil
                         )
@@ -310,7 +400,7 @@ struct RecommendationView: View {
                         EmptyDinerCard()
                     }
                 }
-                .padding(.horizontal, 10)
+                .padding(.horizontal, 6)
                 .padding(.top)
                 
                 // Action buttons 
@@ -331,21 +421,24 @@ struct RecommendationView: View {
                         .shadow(radius: 3)
                     }
                     
-                    // Debug auto-select button moved to conditional
+                    // Debug buttons or location button
                     if viewModel.isDebugMode {
-                        Button(action: {
-                            viewModel.autoSelectRestaurant()
-                        }) {
-                            HStack {
-                                Image(systemName: "wand.and.stars")
-                                Text("자동 선택")
+                        VStack(spacing: 10) {
+                            // Debug auto-select button
+                            Button(action: {
+                                viewModel.autoSelectRestaurant()
+                            }) {
+                                HStack {
+                                    Image(systemName: "wand.and.stars")
+                                    Text("자동 선택")
+                                }
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 16)
+                                .background(Color.purple.opacity(0.8))
+                                .foregroundColor(.white)
+                                .cornerRadius(20)
+                                .shadow(radius: 2)
                             }
-                            .padding(.vertical, 12)
-                            .padding(.horizontal, 20)
-                            .background(Color.purple.opacity(0.8))
-                            .foregroundColor(.white)
-                            .cornerRadius(25)
-                            .shadow(radius: 3)
                         }
                     } else {
                         // Current location button (if not in debug mode)
@@ -463,7 +556,7 @@ struct DinerCard: View {
     var onUpvote: () -> Void
     var onDownvote: () -> Void
     @State private var forceUpdate: Bool = false
-    var isDebugMode: Bool
+    @State private var localDebugMode: Bool = false
     var score: Double?
     var categorySimilarity: Double?
     
@@ -484,7 +577,7 @@ struct DinerCard: View {
     }
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             // Restaurant image
             ZStack(alignment: .topTrailing) {
                 AsyncImage(url: restaurant.imageURL != nil ? URL(string: restaurant.imageURL!) : nil) { phase in
@@ -500,21 +593,21 @@ struct DinerCard: View {
                         ProgressView()
                     }
                 }
-                .frame(height: 120)
+                .frame(height: 100)
                 .clipped()
                 .cornerRadius(8)
                 
                 // Selection indicator (always visible)
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .foregroundColor(isSelected ? .green : .gray.opacity(0.7))
-                    .padding(6)
+                    .padding(4)
                     .background(Color.white.opacity(0.7))
                     .clipShape(Circle())
-                    .padding(8)
+                    .padding(6)
             }
             
             // Restaurant info
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(restaurant.name)
                     .font(.headline)
                     .lineLimit(1)
@@ -527,8 +620,8 @@ struct DinerCard: View {
                 HStack {
                     Text(restaurant.priceRange.rawValue)
                         .font(.caption)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 1)
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(4)
                     
@@ -539,43 +632,54 @@ struct DinerCard: View {
                         .foregroundColor(.gray)
                 }
                 
-                // Debug information
-                if isDebugMode {
+                // Debug information - more explicitly check debug mode status
+                if viewModel.isDebugMode == true || localDebugMode == true {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Score: \(String(format: "%.2f", score ?? 0))")
-                            .font(.caption2)
-                            .foregroundColor(.blue)
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.white)
                         
                         Text("Category Match: \(String(format: "%.2f", categorySimilarity ?? 0))")
-                            .font(.caption2)
-                            .foregroundColor(.blue)
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.white)
                     }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
+                    .padding(.horizontal, 8)
+                    .background(Color.red.opacity(0.8))
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.black, lineWidth: 1)
+                    )
+                    .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 1)
                     .padding(.top, 2)
+                    .padding(.bottom, 2)
                 }
             }
-            .padding(.horizontal, 6)
+            .padding(.horizontal, 4)
             
             // Action buttons - redesign to follow Cursor guidelines
-            HStack(spacing: 12) {
+            HStack(spacing: 8) {
                 // Like button
                 Button(action: {
                     onUpvote()
                 }) {
-                    VStack(spacing: 4) {
+                    VStack(spacing: 2) {
                         Image(systemName: isFavorited ? "heart.fill" : "heart")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 20, height: 20)
+                            .frame(width: 16, height: 16)
                             .foregroundColor(isFavorited ? .red : .gray)
                             .animation(.spring(), value: isFavorited)
                         Text("Like")
-                            .font(.system(size: 10, weight: .medium))
+                            .font(.system(size: 9, weight: .medium))
                             .foregroundColor(isFavorited ? .red : .gray)
                     }
-                    .frame(width: 56, height: 50)
+                    .frame(width: 46, height: 40)
                     .background(Color.white)
                     .cornerRadius(8)
-                    .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: 1)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(isFavorited ? Color.red.opacity(0.3) : Color.gray.opacity(0.2), lineWidth: 1)
@@ -585,21 +689,21 @@ struct DinerCard: View {
                 
                 // Select button
                 Button(action: onToggleSelection) {
-                    VStack(spacing: 4) {
+                    VStack(spacing: 2) {
                         Image(systemName: isSelected ? "checkmark.circle.fill" : "checkmark.circle")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 20, height: 20)
+                            .frame(width: 16, height: 16)
                             .foregroundColor(isSelected ? .green : .gray)
                             .animation(.spring(), value: isSelected)
                         Text("Select")
-                            .font(.system(size: 10, weight: .medium))
+                            .font(.system(size: 9, weight: .medium))
                             .foregroundColor(isSelected ? .green : .gray)
                     }
-                    .frame(width: 56, height: 50)
+                    .frame(width: 46, height: 40)
                     .background(Color.white)
                     .cornerRadius(8)
-                    .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: 1)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(isSelected ? Color.green.opacity(0.3) : Color.gray.opacity(0.2), lineWidth: 1)
@@ -611,21 +715,21 @@ struct DinerCard: View {
                 Button(action: {
                     onDownvote()
                 }) {
-                    VStack(spacing: 4) {
+                    VStack(spacing: 2) {
                         Image(systemName: isDownvoted ? "hand.thumbsdown.fill" : "hand.thumbsdown")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 20, height: 20)
+                            .frame(width: 16, height: 16)
                             .foregroundColor(isDownvoted ? .blue : .gray)
                             .animation(.spring(), value: isDownvoted)
                         Text("Dislike")
-                            .font(.system(size: 10, weight: .medium))
+                            .font(.system(size: 9, weight: .medium))
                             .foregroundColor(isDownvoted ? .blue : .gray)
                     }
-                    .frame(width: 56, height: 50)
+                    .frame(width: 46, height: 40)
                     .background(Color.white)
                     .cornerRadius(8)
-                    .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: 1)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(isDownvoted ? Color.blue.opacity(0.3) : Color.gray.opacity(0.2), lineWidth: 1)
@@ -633,14 +737,34 @@ struct DinerCard: View {
                 }
                 .id("downvote-\(restaurant.id)-\(isDownvoted)")
             }
-            .padding(.vertical, 6)
+            .padding(.vertical, 4)
         }
-        .id("DinerCard-\(restaurant.id)-\(forceUpdate)-\(isFavorited)-\(isDownvoted)-\(isSelected)")
-        .padding(8)
+        .id("DinerCard-\(restaurant.id)-\(forceUpdate)-\(isFavorited)-\(isDownvoted)-\(isSelected)-\(localDebugMode)")
+        .padding(6)
         .background(Color.white)
         .cornerRadius(12)
         .shadow(radius: 2)
         .frame(maxWidth: .infinity)
+        .overlay(
+            // Additional safety check to ensure debug info is visible
+            ZStack {
+                if viewModel.isDebugMode || localDebugMode {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Text("DEBUG: \(String(format: "%.2f", score ?? 0))")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(4)
+                                .background(Color.red)
+                                .cornerRadius(4)
+                                .padding(6)
+                        }
+                    }
+                }
+            }
+        )
         .onReceive(NotificationCenter.default.publisher(for: .refreshDownvotedStatus)) { _ in
             forceUpdate.toggle()
         }
@@ -649,6 +773,17 @@ struct DinerCard: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .refreshSelectionStatus)) { _ in
             forceUpdate.toggle()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .debugModeChanged)) { _ in
+            // Explicitly set the local debug mode from the view model
+            self.localDebugMode = viewModel.isDebugMode
+            print("Debug notification received in DinerCard: viewModel.isDebugMode=\(viewModel.isDebugMode), localDebugMode=\(localDebugMode)")
+            forceUpdate.toggle()
+        }
+        .onAppear {
+            // Explicitly set the local debug mode from the view model
+            self.localDebugMode = viewModel.isDebugMode
+            print("DinerCard appeared: viewModel.isDebugMode=\(viewModel.isDebugMode), localDebugMode=\(localDebugMode)")
         }
     }
 }
@@ -933,7 +1068,7 @@ struct FavoriteListView: View {
     var body: some View {
         List {
             if viewModel.favoriteRestaurants.isEmpty {
-                Text("No favorite restaurants yet")
+                Text("즐겨찾는 음식점이 없습니다")
                     .foregroundColor(.gray)
                     .padding()
             } else {
@@ -958,7 +1093,7 @@ struct FavoriteListView: View {
                 }
             }
         }
-        .navigationTitle("Favorite Restaurants")
+        .navigationTitle("즐겨찾는 음식점")
     }
 }
 
@@ -968,7 +1103,7 @@ struct DownvotedListView: View {
     var body: some View {
         List {
             if viewModel.downvotedRestaurants.isEmpty {
-                Text("No downvoted restaurants")
+                Text("싫어하는 음식점이 없습니다")
                     .foregroundColor(.gray)
                     .padding()
             } else {
@@ -993,7 +1128,7 @@ struct DownvotedListView: View {
                 }
             }
         }
-        .navigationTitle("Downvoted Restaurants")
+        .navigationTitle("싫어하는 음식점")
     }
 }
 
